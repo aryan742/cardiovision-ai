@@ -7,7 +7,6 @@ import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
 import joblib
-from PIL import Image
 
 # Ensure project root is in the path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -22,9 +21,11 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Initialize Session States for flow control
-if 'step' not in st.session_state:
-    st.session_state.step = 'hero'
+# Initialize Session States for narrative control
+if 'analyzed' not in st.session_state:
+    st.session_state.analyzed = False
+if 'analyzing' not in st.session_state:
+    st.session_state.analyzing = False
 if 'patient_profile' not in st.session_state:
     st.session_state.patient_profile = {}
 if 'prediction_result' not in st.session_state:
@@ -37,172 +38,7 @@ anatomy_path = os.path.join(assets_dir, 'heart_vessel_anatomy.jpg')
 narrowing_path = os.path.join(assets_dir, 'narrowing_of_coronary_artery.png')
 disease_types_path = os.path.join(assets_dir, 'types_of_heart_disease.png')
 
-# Global CSS Overrides for a Stunning, Premium Medical Experience
-st.markdown("""
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-    
-    /* Hide Default Streamlit Elements to make it feel like a fully custom web application */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
-    
-    /* Core Layout and Deep Dark Medical Aesthetics */
-    html, body, [data-testid="stAppViewContainer"] {
-        background-color: #03050b !important;
-        color: #E2E8F0 !important;
-        font-family: 'Plus Jakarta Sans', sans-serif !important;
-    }
-    
-    [data-testid="block-container"] {
-        padding-top: 1.5rem !important;
-        padding-bottom: 3rem !important;
-        padding-left: 4rem !important;
-        padding-right: 4rem !important;
-    }
-    
-    /* Cinematic Glassmorphism Container Design */
-    .clinical-glass {
-        background: rgba(10, 14, 28, 0.7) !important;
-        backdrop-filter: blur(20px) !important;
-        -webkit-backdrop-filter: blur(20px) !important;
-        border: 1px solid rgba(226, 232, 240, 0.08) !important;
-        border-radius: 24px !important;
-        padding: 35px !important;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6) !important;
-        margin-bottom: 25px !important;
-    }
-    
-    .hero-glow-card {
-        border-left: 4px solid #E63946 !important;
-        background: linear-gradient(135deg, rgba(230, 57, 70, 0.04) 0%, rgba(0, 242, 254, 0.01) 100%) !important;
-    }
-    
-    .teaser-card {
-        border-left: 4px solid #00f2fe !important;
-        background: linear-gradient(135deg, rgba(0, 242, 254, 0.04) 0%, rgba(230, 57, 70, 0.01) 100%) !important;
-    }
-    
-    /* ECG Heartbeat Pulsating Animations */
-    @keyframes heartbeat {
-        0% { transform: scale(1); opacity: 0.6; filter: drop-shadow(0 0 5px rgba(230, 57, 70, 0.4)); }
-        15% { transform: scale(1.05); opacity: 0.95; filter: drop-shadow(0 0 15px rgba(230, 57, 70, 0.8)); }
-        30% { transform: scale(0.98); opacity: 0.7; }
-        45% { transform: scale(1.08); opacity: 1; filter: drop-shadow(0 0 20px rgba(230, 57, 70, 0.9)); }
-        70% { transform: scale(1); opacity: 0.6; filter: drop-shadow(0 0 5px rgba(230, 57, 70, 0.4)); }
-        100% { transform: scale(1); opacity: 0.6; }
-    }
-    
-    .heart-pulse {
-        animation: heartbeat 2.2s infinite cubic-bezier(0.215, 0.610, 0.355, 1);
-    }
-    
-    /* Fluid Vascular Gradients and Typography Styling */
-    .clinical-gradient-text {
-        background: linear-gradient(135deg, #FFFFFF 30%, #94A3B8 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        font-weight: 800 !important;
-    }
-    
-    .teal-glow-text {
-        color: #00f2fe !important;
-        text-shadow: 0 0 15px rgba(0, 242, 254, 0.35);
-    }
-    
-    .coral-glow-text {
-        color: #E63946 !important;
-        text-shadow: 0 0 15px rgba(230, 57, 70, 0.35);
-    }
-    
-    /* Custom CSS Overrides for Streamlit Standard Inputs */
-    .stTextInput > div > div > input, .stNumberInput input, .stSelectbox select {
-        background-color: #090c15 !important;
-        color: #FFFFFF !important;
-        border: 1px solid rgba(226, 232, 240, 0.1) !important;
-        border-radius: 12px !important;
-        font-family: 'Plus Jakarta Sans', sans-serif !important;
-        padding: 10px 14px !important;
-        transition: all 0.3s ease;
-    }
-    .stTextInput > div > div > input:focus, .stNumberInput input:focus {
-        border-color: #00f2fe !important;
-        box-shadow: 0 0 10px rgba(0, 242, 254, 0.2) !important;
-    }
-    
-    /* Premium Styled Clinical Action Buttons */
-    div.stButton > button {
-        background: linear-gradient(135deg, #E63946 0%, #B91C1C 100%) !important;
-        color: #FFFFFF !important;
-        border: none !important;
-        border-radius: 14px !important;
-        padding: 16px 32px !important;
-        font-weight: 700 !important;
-        font-size: 1rem !important;
-        letter-spacing: 0.05em !important;
-        text-transform: uppercase !important;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-        box-shadow: 0 8px 24px rgba(230, 57, 70, 0.35) !important;
-        width: 100% !important;
-    }
-    div.stButton > button:hover {
-        transform: translateY(-2px) !important;
-        box-shadow: 0 12px 30px rgba(230, 57, 70, 0.55) !important;
-        border: none !important;
-        color: #FFFFFF !important;
-    }
-    div.stButton > button:active {
-        transform: translateY(1px) !important;
-    }
-    
-    /* Dynamic Pill Indicator Classes */
-    .indicator-pill-premium {
-        display: inline-flex;
-        align-items: center;
-        padding: 6px 16px;
-        border-radius: 9999px;
-        font-size: 0.78rem;
-        font-weight: 800;
-        letter-spacing: 0.05em;
-        text-transform: uppercase;
-    }
-    .pill-high {
-        background-color: rgba(230, 57, 70, 0.12);
-        color: #F87171;
-        border: 1px solid rgba(230, 57, 70, 0.35);
-        box-shadow: 0 0 15px rgba(230, 57, 70, 0.15);
-    }
-    .pill-medium {
-        background-color: rgba(245, 158, 11, 0.12);
-        color: #FBBF24;
-        border: 1px solid rgba(245, 158, 11, 0.35);
-        box-shadow: 0 0 15px rgba(245, 158, 11, 0.15);
-    }
-    .pill-low {
-        background-color: rgba(13, 148, 136, 0.12);
-        color: #2DD4BF;
-        border: 1px solid rgba(13, 148, 136, 0.35);
-        box-shadow: 0 0 15px rgba(13, 148, 136, 0.15);
-    }
-    
-    /* Subtle Floating Medical Particle Simulation */
-    @keyframes floatParticle {
-        0% { transform: translateY(0px) rotate(0deg); opacity: 0.15; }
-        50% { transform: translateY(-30px) rotate(180deg); opacity: 0.3; }
-        100% { transform: translateY(0px) rotate(360deg); opacity: 0.15; }
-    }
-    .float-orb-1 {
-        position: absolute; width: 120px; height: 120px; background: radial-gradient(circle, rgba(230, 57, 70, 0.1) 0%, transparent 70%);
-        border-radius: 50%; top: 15%; left: 10%; animation: floatParticle 12s infinite ease-in-out; pointer-events: none;
-    }
-    .float-orb-2 {
-        position: absolute; width: 180px; height: 180px; background: radial-gradient(circle, rgba(0, 242, 254, 0.08) 0%, transparent 70%);
-        border-radius: 50%; bottom: 10%; right: 10%; animation: floatParticle 18s infinite ease-in-out; pointer-events: none;
-    }
-</style>
-""", unsafe_allow_html=True)
-
-# Helper function to dynamically parse training outputs and metadata
+# Dynamic System Metrics
 def get_system_metadata():
     metadata = {
         'accuracy': 0.9200,
@@ -211,7 +47,6 @@ def get_system_metadata():
         'f1_score': 0.9199,
         'roc_auc': 0.9871,
         'dataset_size': 1000,
-        'feature_count': 11,
         'model_name': 'XGBoost Classifier'
     }
     try:
@@ -228,11 +63,6 @@ def get_system_metadata():
                 metadata['f1_score'] = float(df_m.get('F1-Score', [0.9199])[0])
                 metadata['roc_auc'] = float(df_m.get('ROC-AUC', [0.9871])[0])
                 
-        feature_names_path = os.path.join(models_dir, 'feature_names.pkl')
-        if os.path.exists(feature_names_path):
-            feats = joblib.load(feature_names_path)
-            metadata['feature_count'] = len(feats)
-            
         model_info_path = os.path.join(models_dir, 'model_info.pkl')
         if os.path.exists(model_info_path):
             m_info = joblib.load(model_info_path)
@@ -261,53 +91,358 @@ def load_predictor():
 
 predictor = load_predictor()
 
-# ==================== SECTION 1 — HERO EXPERIENCE ====================
-def show_hero():
-    # Inject background particle elements
-    st.markdown("<div class='float-orb-1'></div><div class='float-orb-2'></div>", unsafe_allow_html=True)
+# Immersive CSS & JavaScript (Custom elements, glassmorphism, scrollytelling persistent heart)
+st.markdown("""
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
     
-    st.markdown("<div style='margin-top: 50px;'></div>", unsafe_allow_html=True)
+    /* Completely hide Streamlit layout controls to force product site aesthetics */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    [data-testid="collapsedSidebarCodemirror"] { display: none !important; }
+    section[data-testid="stSidebar"] { display: none !important; }
+    [data-testid="stSidebarCollapseButton"] { display: none !important; }
     
-    col1, col2 = st.columns([13, 11], gap="large")
+    html, body, [data-testid="stAppViewContainer"] {
+        background-color: #03050b !important;
+        color: #E2E8F0 !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
+        scroll-behavior: smooth;
+    }
     
-    with col1:
+    [data-testid="block-container"] {
+        padding-top: 1rem !important;
+        padding-bottom: 4rem !important;
+        padding-left: 5rem !important;
+        padding-right: 5rem !important;
+    }
+    
+    /* Apple-Style Glassmorphic Layouts */
+    .narrative-container {
+        margin-bottom: 80px;
+        padding: 40px;
+        background: rgba(10, 14, 28, 0.6);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border: 1px solid rgba(226, 232, 240, 0.06);
+        border-radius: 28px;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+        transition: all 0.4s ease;
+    }
+    
+    .narrative-container:hover {
+        border-color: rgba(0, 242, 254, 0.15);
+        box-shadow: 0 40px 80px rgba(0, 242, 254, 0.04);
+    }
+    
+    /* Sleek Typography */
+    .scrolly-title {
+        background: linear-gradient(135deg, #FFFFFF 40%, #94A3B8 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 800 !important;
+        letter-spacing: -0.04em !important;
+        line-height: 1.15;
+    }
+    
+    .pulse-glow-teal {
+        color: #00f2fe !important;
+        text-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
+    }
+    
+    .pulse-glow-coral {
+        color: #E63946 !important;
+        text-shadow: 0 0 15px rgba(230, 57, 70, 0.4);
+    }
+    
+    /* Interactive Inputs Styling Overrides */
+    .stTextInput > div > div > input, .stNumberInput input, .stSelectbox select {
+        background-color: #080b14 !important;
+        color: #FFFFFF !important;
+        border: 1px solid rgba(226, 232, 240, 0.08) !important;
+        border-radius: 12px !important;
+        padding: 12px 16px !important;
+        transition: all 0.3s ease;
+    }
+    
+    /* Styled Clinical Action Buttons */
+    div.stButton > button {
+        background: linear-gradient(135deg, #E63946 0%, #B91C1C 100%) !important;
+        color: #FFFFFF !important;
+        border: none !important;
+        border-radius: 14px !important;
+        padding: 18px 36px !important;
+        font-weight: 700 !important;
+        font-size: 1.05rem !important;
+        letter-spacing: 0.05em !important;
+        text-transform: uppercase !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        box-shadow: 0 10px 30px rgba(230, 57, 70, 0.35) !important;
+        width: 100% !important;
+    }
+    div.stButton > button:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 15px 40px rgba(230, 57, 70, 0.55) !important;
+        border: none !important;
+        color: #FFFFFF !important;
+    }
+    
+    /* Indicator Badges */
+    .pill-premium {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 18px;
+        border-radius: 9999px;
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+    }
+    .indicator-high {
+        background-color: rgba(230, 57, 70, 0.12);
+        color: #F87171;
+        border: 1px solid rgba(230, 57, 70, 0.35);
+        box-shadow: 0 0 15px rgba(230, 57, 70, 0.2);
+    }
+    .indicator-medium {
+        background-color: rgba(245, 158, 11, 0.12);
+        color: #FBBF24;
+        border: 1px solid rgba(245, 158, 11, 0.35);
+        box-shadow: 0 0 15px rgba(245, 158, 11, 0.2);
+    }
+    .indicator-low {
+        background-color: rgba(13, 148, 136, 0.12);
+        color: #2DD4BF;
+        border: 1px solid rgba(13, 148, 136, 0.35);
+        box-shadow: 0 0 15px rgba(13, 148, 136, 0.2);
+    }
+    
+    /* ==================== PERSISTENT OBJECT WEB HUD ==================== */
+    .hud-canvas {
+        position: fixed;
+        top: 25%;
+        right: 8%;
+        width: 320px;
+        height: 320px;
+        z-index: 9999;
+        pointer-events: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    /* continuous mechanical telemetry rotating rings */
+    @keyframes rotateOuter {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    @keyframes rotateInner {
+        from { transform: rotate(360deg); }
+        to { transform: rotate(0deg); }
+    }
+    @keyframes pulseHeart {
+        0% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(230, 57, 70, 0.4)); }
+        15% { transform: scale(1.06); filter: drop-shadow(0 0 25px rgba(230, 57, 70, 0.85)); }
+        30% { transform: scale(0.97); }
+        45% { transform: scale(1.08); filter: drop-shadow(0 0 30px rgba(230, 57, 70, 0.95)); }
+        70% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(230, 57, 70, 0.4)); }
+        100% { transform: scale(1); }
+    }
+    
+    .hud-outer-ring {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border: 2px dashed rgba(0, 242, 254, 0.2);
+        border-radius: 50%;
+        animation: rotateOuter 25s infinite linear;
+    }
+    
+    .hud-inner-ring {
+        position: absolute;
+        width: 82%;
+        height: 82%;
+        border: 1px dashed rgba(230, 57, 70, 0.25);
+        border-radius: 50%;
+        animation: rotateInner 15s infinite linear;
+    }
+    
+    .hud-heart-element {
+        width: 48%;
+        height: 48%;
+        fill: url(#heartGradient);
+        animation: pulseHeart 2.2s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
+        transition: all 0.8s ease;
+    }
+</style>
+
+<!-- Floating HUD Persistent Object Markup -->
+<div class="hud-canvas" id="scrollytelling-hud">
+    <div class="hud-outer-ring"></div>
+    <div class="hud-inner-ring"></div>
+    <svg class="hud-heart-element" viewBox="0 0 24 24">
+        <defs>
+            <radialGradient id="heartGradient" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#FF5E62" />
+                <stop offset="100%" stop-color="#A61C2C" />
+            </radialGradient>
+        </defs>
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+    </svg>
+</div>
+
+<!-- Scroll Listener Script to transform the persistent object dynamically -->
+<script>
+    const hud = document.getElementById('scrollytelling-hud');
+    const innerRing = document.querySelector('.hud-inner-ring');
+    const outerRing = document.querySelector('.hud-outer-ring');
+    const heartNode = document.querySelector('.hud-heart-element');
+
+    window.addEventListener('scroll', () => {
+        let st = window.pageYOffset || document.documentElement.scrollTop;
+        let sh = document.documentElement.scrollHeight - window.innerHeight;
+        let pct = sh > 0 ? (st / sh) : 0;
+        
+        // Dynamic Transformations based on scroll position
+        let rotation = pct * 360;
+        let scale = 1.0 + Math.sin(pct * Math.PI) * 0.2;
+        
+        let translateX = 0;
+        let translateY = 0;
+        
+        if (pct < 0.15) {
+            // Section 1 (Hero): Floating Top-Right
+            translateX = 0;
+            translateY = 0;
+            heartNode.style.animationDuration = "2.2s";
+            hud.style.opacity = "1";
+        } else if (pct < 0.32) {
+            // Section 2 (Intro): Glide to Left Center
+            translateX = -680;
+            translateY = 50;
+            heartNode.style.animationDuration = "1.8s";
+            hud.style.opacity = "0.95";
+        } else if (pct < 0.50) {
+            // Section 3 (Inputs): Glide to Right
+            translateX = 50;
+            translateY = 120;
+            heartNode.style.animationDuration = "1.4s";
+        } else if (pct < 0.75) {
+            // Section 5 (Dashboard): Float as deep glowing background element (large & faded)
+            translateX = -320;
+            translateY = -50;
+            scale = 1.6;
+            hud.style.opacity = "0.15";
+            heartNode.style.animationDuration = "0.8s"; // Hyper pulse under stress calculation
+        } else {
+            // Section 8/9 (Anatomy & Footer): Right Side
+            translateX = 0;
+            translateY = 80;
+            scale = 1.1;
+            hud.style.opacity = "0.7";
+            heartNode.style.animationDuration = "2.0s";
+        }
+        
+        hud.style.transform = `translate(${translateX}px, ${translateY}px) rotate(${rotation}deg) scale(${scale})`;
+    });
+</script>
+""", unsafe_allow_html=True)
+
+
+# ==================== NARRATIVE FLOW CONTROLLER ====================
+
+def main():
+    # If the user triggers "Analyze Risk", bypass standard render to show full cinematic loader
+    if st.session_state.analyzing:
+        show_analysis_loader()
+        return
+
+    # 1. HERO SECTION
+    render_hero()
+    
+    # 2. INTRODUCTION SECTION
+    render_intro()
+    
+    # 3. INTERACTIVE INPUT SECTION
+    render_inputs()
+    
+    # 5. DASHBOARD RESULTS SECTION (Conditionally revealed or placeholders rendered)
+    render_dashboard_section()
+    
+    # 6. SCROLL-BASED EXPLANATION SECTIONS
+    render_explanations()
+    
+    # 7. RECOMMENDATION / PREVENTION SECTIONS
+    render_recommendations()
+    
+    # 8. VISUAL HEALTH EDUCATION
+    render_visual_anatomy()
+    
+    # 9. FOOTER SECTION
+    render_footer()
+
+
+# ==================== SECTION 1: HERO ====================
+def render_hero():
+    st.markdown("<div style='margin-top: 60px;'></div>", unsafe_allow_html=True)
+    c1, c2 = st.columns([12, 10], gap="large")
+    
+    with c1:
         st.markdown("""
-        <div style='margin-top: 30px;'>
-            <div style='display: inline-flex; align-items: center; gap: 8px; background: rgba(0, 242, 254, 0.08); border: 1px solid rgba(0, 242, 254, 0.25); border-radius: 99px; padding: 6px 16px; margin-bottom: 25px;'>
-                <span class='heart-pulse' style='height: 7px; width: 7px; background-color: #E63946; border-radius: 50%; display: inline-block;'></span>
-                <span style='font-size: 0.72rem; font-weight: 800; letter-spacing: 0.08em; color: #00f2fe; text-transform: uppercase;'>Clinical Diagnostic Core Online</span>
+        <div style='margin-top: 40px;'>
+            <div style='display: inline-flex; align-items: center; gap: 8px; background: rgba(0, 242, 254, 0.08); border: 1px solid rgba(0, 242, 254, 0.25); border-radius: 99px; padding: 6px 18px; margin-bottom: 25px;'>
+                <span style='height: 6px; width: 6px; background-color: #E63946; border-radius: 50%; display: inline-block; box-shadow: 0 0 8px #E63946;'></span>
+                <span style='font-size: 0.7rem; font-weight: 800; letter-spacing: 0.1em; color: #00f2fe; text-transform: uppercase;'>Clinical Diagnostic Core Online</span>
             </div>
-            <h1 class='clinical-gradient-text' style='font-size: 3.35rem; line-height: 1.15; letter-spacing: -0.03em; margin: 0 0 20px 0;'>
+            <h1 class='scrolly-title' style='font-size: 3.55rem; line-height: 1.1; margin: 0 0 20px 0;'>
                 CardioVision AI<br>
-                <span class='teal-glow-text' style='font-size: 2.7rem; font-weight: 700;'>Cardiovascular Risk Intelligence</span>
+                <span class='pulse-glow-teal' style='font-size: 2.85rem; font-weight: 700;'>Biometric Risk Intelligence</span>
             </h1>
-            <p style='color: #94A3B8; font-size: 1.15rem; line-height: 1.6; max-width: 580px; margin-bottom: 35px;'>
-                Decoupling sub-clinical pathological risk from advanced biometric profiles. CardioVision AI blends clinical-grade predictive modeling with real-time biological visual narrative diagnostics.
+            <p style='color: #94A3B8; font-size: 1.2rem; line-height: 1.6; max-width: 580px; margin-bottom: 40px;'>
+                A cinematic, scrollytelling analytics experience designed to decouple cardiovascular pathologies from complex biometric EHR vectors. Interact, scroll, and visualize local diagnostic explainability.
             </p>
-        </div>
+            <div style='max-width: 320px;'>
         """, unsafe_allow_html=True)
         
-        if st.button("Start Cardiovascular Assessment", key="start_assessment_btn"):
-            st.session_state.step = 'inputs'
-            st.rerun()
-            
-    with col2:
-        # Display the stunning cinematic image asset
-        if os.path.exists(cinematic_bg_path):
-            st.image(cinematic_bg_path, use_column_width=True, caption="Cardiovascular Flow Visualization — Multi-Branch Endothelial Simulation")
-        else:
+        # Apple-style smooth scroll down trigger button
+        if st.button("Begin Diagnostic Journey", key="hero_scroll_down"):
             st.markdown("""
-            <div style='background: linear-gradient(135deg, #090c15 0%, #1e2954 100%); border: 1px solid rgba(226, 232, 240, 0.08); border-radius: 24px; height: 350px; display: flex; align-items: center; justify-content: center; box-shadow: 0 20px 40px rgba(0,0,0,0.5);'>
-                <span style='color: #475569; font-size: 3rem;'>🫀</span>
-            </div>
+            <script>
+                document.getElementById("biometric-configuration-head").scrollIntoView({behavior: "smooth"});
+            </script>
             """, unsafe_allow_html=True)
+            
+        st.markdown("</div></div>", unsafe_allow_html=True)
+        
+    with c2:
+        # Subtle right background visual offset (persistent heart floats near here)
+        st.markdown("<div style='height: 400px;'></div>", unsafe_allow_html=True)
 
-# ==================== SECTION 2 — GUIDED BIOMETRIC INPUT EXPERIENCE ====================
-def show_inputs():
-    st.markdown("<div style='margin-top: 30px;'></div>", unsafe_allow_html=True)
+
+# ==================== SECTION 2: INTRODUCTION ====================
+def render_intro():
+    st.markdown("<div style='margin-top: 100px;'></div>", unsafe_allow_html=True)
+    st.markdown("""
+    <div class="narrative-container">
+        <h2 class="scrolly-title" style="font-size: 2.2rem; margin-top:0; margin-bottom: 20px;">The Sub-Clinical Pathology Challenge</h2>
+        <p style="color: #94A3B8; font-size: 1.05rem; line-height: 1.7; max-width: 780px;">
+            Cardiovascular diseases remain the leading cause of global mortality, yet early endothelial wear is rarely detectable in isolation. A single standard biomarker—be it blood pressure, lipid density, or physical activity indicators—fails to tell the full story.
+        </p>
+        <div style="background-color: rgba(0, 242, 254, 0.02); border-left: 3px solid #00f2fe; padding: 20px; border-radius: 4px 16px 16px 4px; margin-top: 25px; font-size: 0.92rem; line-height: 1.6; color: #94A3B8;">
+            <b>The CardioVision Narrative Concept:</b> Rather than serving as a black-box decision maker, our model decodes the structural multi-variable dependencies of cardiovascular strain. By configuring the biometric vector below, you will trigger our local XGBoost classifier engine, mapping out localized pathology weight impacts in real-time.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+
+# ==================== SECTION 3: INTERACTIVE INPUT SECTION ====================
+def render_inputs():
+    st.markdown("<div id='biometric-configuration-head' style='margin-top: 60px;'></div>", unsafe_allow_html=True)
     st.markdown("""
     <div style='text-align: center; margin-bottom: 40px;'>
-        <h2 class='clinical-gradient-text' style='font-size: 2.2rem; margin: 0 0 10px 0;'>Patient Biomarker Configuration</h2>
+        <h2 class='scrolly-title' style='font-size: 2.2rem; margin: 0 0 10px 0;'>1. Configure Patient Biomarkers</h2>
         <p style='color: #94A3B8; font-size: 1rem; max-width: 600px; margin: 0 auto;'>Configure the physiological diagnostic vector below. Grouped parameters are parsed natively into standard scaling matrices.</p>
     </div>
     """, unsafe_allow_html=True)
@@ -323,7 +458,7 @@ def show_inputs():
                 <h4 style='margin: 0; color: #FFFFFF; font-size: 0.95rem; font-weight: 700;'>Vital Signs</h4>
             </div>
             """, unsafe_allow_html=True)
-            age_years = st.slider("Patient Age (Years)", min_value=18, max_value=100, value=54, help="Clinical chronological age metric.")
+            age_years = st.slider("Patient Age (Years)", min_value=18, max_value=100, value=54)
             gender = st.selectbox("Biological Sex", options=[1, 2], format_func=lambda x: "Female" if x == 1 else "Male")
             height = st.slider("Height (cm)", min_value=120, max_value=220, value=170)
             weight = st.slider("Weight (kg)", min_value=40.0, max_value=180.0, value=76.5)
@@ -335,8 +470,8 @@ def show_inputs():
                 <h4 style='margin: 0; color: #FFFFFF; font-size: 0.95rem; font-weight: 700;'>Hemodynamics</h4>
             </div>
             """, unsafe_allow_html=True)
-            ap_hi = st.slider("Systolic BP (mmHg)", min_value=80, max_value=220, value=128, help="Peak pressure during ventricular contraction.")
-            ap_lo = st.slider("Diastolic BP (mmHg)", min_value=50, max_value=130, value=82, help="Arterial pressure during cardiac resting phase.")
+            ap_hi = st.slider("Systolic BP (mmHg)", min_value=80, max_value=220, value=128)
+            ap_lo = st.slider("Diastolic BP (mmHg)", min_value=50, max_value=130, value=82)
             
         with c3:
             st.markdown("""
@@ -365,7 +500,7 @@ def show_inputs():
         submit = st.form_submit_button("Generate Predictive Analysis Vector")
         
     if submit:
-        # Cache profile details
+        # Cache patient vector in session
         st.session_state.patient_profile = {
             'age': age_years * 365.25,
             'age_years': age_years,
@@ -380,25 +515,25 @@ def show_inputs():
             'alco': alco,
             'active': active
         }
-        st.session_state.step = 'analyzing'
+        st.session_state.analyzing = True
         st.rerun()
 
-# ==================== SECTION 3 — AI ANALYSIS EXPERIENCE ====================
+
+# ==================== SECTION 4: AI ANALYSIS EXPERIENCE (CINEMATIC) ====================
 def show_analysis_loader():
     st.markdown("<div style='margin-top: 80px;'></div>", unsafe_allow_html=True)
     c1, c2, c3 = st.columns([1, 2, 1])
     
     with c2:
-        st.markdown("<div class='clinical-glass' style='text-align: center; padding: 50px 30px !important;'>", unsafe_allow_html=True)
+        st.markdown("<div class='narrative-container' style='text-align: center; padding: 60px 40px !important; border-color: rgba(230,57,70,0.3);'>", unsafe_allow_html=True)
         
-        # Visual pulsating vector graphic
+        # Cinematic pulsating vector graphic
         st.markdown("""
         <div style='display: flex; justify-content: center; align-items: center; margin-bottom: 40px;'>
-            <div class='heart-pulse' style='font-size: 4.5rem; filter: drop-shadow(0 0 15px #E63946);'>🫀</div>
+            <div class='heart-pulse' style='font-size: 5rem; filter: drop-shadow(0 0 20px #E63946);'>🫀</div>
         </div>
         """, unsafe_allow_html=True)
         
-        # Simulation step triggers
         progress_bar = st.progress(0)
         status_msg = st.empty()
         
@@ -411,7 +546,7 @@ def show_analysis_loader():
         ]
         
         for text, val in stages:
-            status_msg.markdown(f"<p style='color: #00f2fe; font-size: 0.95rem; font-weight: 600; letter-spacing: 0.03em;'>{text}</p>", unsafe_allow_html=True)
+            status_msg.markdown(f"<p style='color: #00f2fe; font-size: 1rem; font-weight: 600; letter-spacing: 0.05em;'>{text}</p>", unsafe_allow_html=True)
             progress_bar.progress(val)
             time.sleep(0.45)
             
@@ -420,35 +555,40 @@ def show_analysis_loader():
         # Execute ML prediction and save state
         if predictor:
             raw_payload = st.session_state.patient_profile.copy()
-            # Clean non-model metadata key from payload before inference
             if 'age_years' in raw_payload:
                 del raw_payload['age_years']
             prediction = predictor.predict(raw_payload)
             st.session_state.prediction_result = prediction
             
-        st.session_state.step = 'dashboard'
+        st.session_state.analyzed = True
+        st.session_state.analyzing = False
         st.rerun()
 
-# ==================== SECTION 4 — RESULTS DASHBOARD ====================
-def show_dashboard():
-    # Fetch data values
+
+# ==================== SECTION 5: DASHBOARD RESULTS SECTION ====================
+def render_dashboard_section():
+    st.markdown("<div id='cardiovision-results-core' style='margin-top: 80px;'></div>", unsafe_allow_html=True)
+    
+    if not st.session_state.analyzed:
+        st.markdown("""
+        <div class="narrative-container" style="text-align: center; padding: 60px 40px;">
+            <span style="font-size: 3rem; color: rgba(226,232,240,0.15);">🧬</span>
+            <h3 style="color: #94A3B8; font-size: 1.25rem; margin-top: 15px;">Diagnostic Core Standby</h3>
+            <p style="color: #64748B; font-size: 0.9rem; max-width: 480px; margin: 8px auto 0 auto;">
+                Complete the biomarker configuration above and generate a predictive analysis vector to unlock the local pathology tracking dashboard.
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+        return
+        
+    # Retrieve model output
     profile = st.session_state.patient_profile
     result = st.session_state.prediction_result
     
-    st.markdown("<div style='margin-top: 25px;'></div>", unsafe_allow_html=True)
-    
-    # Back navigation button to allow re-assessment
-    c_btn1, c_btn2 = st.columns([10, 2])
-    with c_btn2:
-        if st.button("New Assessment", key="reset_assess_btn"):
-            st.session_state.step = 'inputs'
-            st.rerun()
-            
-    # Page Header
     st.markdown("""
     <div style='margin-bottom: 30px;'>
-        <h1 class='clinical-gradient-text' style='font-size: 2.2rem; margin: 0 0 5px 0;'>Cardiovascular Intelligence Report</h1>
-        <p style='color: #94A3B8; font-size: 1rem; margin: 0;'>Automated clinical diagnostics score generated from integrated biometric classification matrices.</p>
+        <h2 class='scrolly-title' style='font-size: 2.2rem; margin: 0 0 5px 0;'>2. Real-Time Risk Intelligence</h2>
+        <p style='color: #94A3B8; font-size: 1.05rem; margin: 0;'>Clinical dashboard embedded naturally into the scrolling diagnostic narrative.</p>
     </div>
     """, unsafe_allow_html=True)
     
@@ -456,23 +596,22 @@ def show_dashboard():
     row1_c1, row1_c2, row1_c3 = st.columns([1, 1, 1], gap="medium")
     
     with row1_c1:
-        st.markdown("<div class='clinical-glass hero-glow-card' style='height: 280px; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;'>", unsafe_allow_html=True)
+        st.markdown("<div class='narrative-container' style='height: 280px; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; margin-bottom: 0;'>", unsafe_allow_html=True)
         st.markdown("<h4 style='color: #94A3B8; font-size: 0.8rem; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 15px;'>Diagnostic Classification</h4>", unsafe_allow_html=True)
         
         risk_lvl = result.get('risk_level', 'Low Risk')
         if risk_lvl == "High Risk":
-            st.markdown("<span class='indicator-pill-premium pill-high' style='font-size: 1rem; padding: 8px 24px;'>Critical Pathology Flagged</span>", unsafe_allow_html=True)
+            st.markdown("<span class='pill-premium indicator-high' style='font-size: 0.95rem; padding: 8px 24px;'>Critical Pathology Flagged</span>", unsafe_allow_html=True)
         elif risk_lvl == "Medium Risk":
-            st.markdown("<span class='indicator-pill-premium pill-medium' style='font-size: 1rem; padding: 8px 24px;'>Borderline Case Profiling</span>", unsafe_allow_html=True)
+            st.markdown("<span class='pill-premium indicator-medium' style='font-size: 0.95rem; padding: 8px 24px;'>Borderline Case Profiling</span>", unsafe_allow_html=True)
         else:
-            st.markdown("<span class='indicator-pill-premium pill-low' style='font-size: 1rem; padding: 8px 24px;'>Physiological Profile Stable</span>", unsafe_allow_html=True)
+            st.markdown("<span class='pill-premium indicator-low' style='font-size: 0.95rem; padding: 8px 24px;'>Physiological Profile Stable</span>", unsafe_allow_html=True)
             
         st.markdown(f"<div style='font-size: 0.85rem; color: #64748B; margin-top: 25px;'>Model Certainty: <b>{result.get('confidence', 95.0)}%</b></div>", unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
         
     with row1_c2:
-        st.markdown("<div class='clinical-glass' style='height: 280px; display: flex; justify-content: center; align-items: center;'>", unsafe_allow_html=True)
-        # Interactive Plotly Gauge
+        st.markdown("<div class='narrative-container' style='height: 280px; display: flex; justify-content: center; align-items: center; margin-bottom: 0;'>", unsafe_allow_html=True)
         prob_val = result.get('risk_probability', 48.0)
         fig_g = go.Figure(go.Indicator(
             mode = "gauge+number",
@@ -483,7 +622,7 @@ def show_dashboard():
             gauge = {
                 'axis': {'range': [0, 100], 'tickwidth': 1, 'tickcolor': "#475569"},
                 'bar': {'color': "#E63946" if risk_lvl == "High Risk" else "#FBBF24" if risk_lvl == "Medium Risk" else "#2DD4BF"},
-                'bgcolor': "#090c15",
+                'bgcolor': "#080b14",
                 'borderwidth': 1,
                 'bordercolor': "rgba(226, 232, 240, 0.08)",
                 'steps': [
@@ -503,7 +642,7 @@ def show_dashboard():
         st.markdown("</div>", unsafe_allow_html=True)
         
     with row1_c3:
-        st.markdown("<div class='clinical-glass teaser-card' style='height: 280px; display: flex; flex-direction: column; justify-content: center;'>", unsafe_allow_html=True)
+        st.markdown("<div class='narrative-container' style='height: 280px; display: flex; flex-direction: column; justify-content: center; margin-bottom: 0;'>", unsafe_allow_html=True)
         st.markdown("<h4 style='color: #FFFFFF; font-size: 0.95rem; font-weight: 700; margin-top: 0; margin-bottom: 8px;'>Active Classifier Benchmark</h4>", unsafe_allow_html=True)
         st.markdown(f"""
         <div style='font-size: 0.8rem; color: #94A3B8; line-height: 1.5;'>
@@ -520,12 +659,11 @@ def show_dashboard():
         """, unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
         
-    # ==================== SECTION 6 — AI EXPLAINABILITY ====================
-    st.markdown("<div class='clinical-glass'>", unsafe_allow_html=True)
-    st.markdown("<h3 style='color: #FFFFFF; font-size: 1.15rem; margin-top: 0; margin-bottom: 15px;'>🔬 Why This Prediction? (Dynamic Biomarker Impact Map)</h3>", unsafe_allow_html=True)
+    # Explainability Attributions Section (Section 6 - gradual local explainability)
+    st.markdown("<div class='narrative-container' style='margin-top: 25px;'>", unsafe_allow_html=True)
+    st.markdown("<h3 style='color: #FFFFFF; font-size: 1.15rem; margin-top: 0; margin-bottom: 15px;'>🔬 Local Feature Attributions (Why This Prediction?)</h3>", unsafe_allow_html=True)
     
     explainers = []
-    # Dynamic feature importance explanations
     if profile['ap_hi'] >= 140 or profile['ap_lo'] >= 90:
         explainers.append(("🚨 Stage 2 Hypertension Impact", f"Arterial pressure metric ({profile['ap_hi']}/{profile['ap_lo']} mmHg) generates critical friction coefficients on heart chamber walls.", "+32% weight increase"))
     elif profile['ap_hi'] >= 130 or profile['ap_lo'] >= 80:
@@ -567,17 +705,71 @@ def show_dashboard():
                 """, unsafe_allow_html=True)
                 
     st.markdown("</div>", unsafe_allow_html=True)
+
+
+# ==================== SECTION 6: SCROLL-BASED EXPLANATION SECTIONS ====================
+def render_explanations():
+    st.markdown("<div style='margin-top: 80px;'></div>", unsafe_allow_html=True)
+    st.markdown("""
+    <div style='text-align: center; margin-bottom: 40px;'>
+        <h2 class='scrolly-title' style='font-size: 2rem; margin: 0 0 10px 0;'>3. Arterial Strains & Pathology Mechanics</h2>
+        <p style='color: #94A3B8; font-size: 1rem; max-width: 600px; margin: 0 auto;'>Visualizing the biological pathways through which biometric abnormalities escalate into chronic cardiovascular conditions.</p>
+    </div>
+    """, unsafe_allow_html=True)
     
-    # ==================== SECTION 7 — PERSONALIZED RECOMMENDATIONS ====================
-    st.markdown("<div class='clinical-glass'>", unsafe_allow_html=True)
-    st.markdown("<h3 style='color: #FFFFFF; font-size: 1.15rem; margin-top: 0; margin-bottom: 15px;'>🛡️ Preventative Health Interventions</h3>", unsafe_allow_html=True)
+    col_story1, col_story2 = st.columns(2, gap="large")
+    
+    with col_story1:
+        st.markdown("<div class='narrative-container' style='height: 480px; display: flex; flex-direction: column; justify-content: space-between; margin-bottom: 0;'>", unsafe_allow_html=True)
+        st.markdown("""
+        <div>
+            <h4 style='color: #00f2fe; font-size: 1rem; margin-top: 0; margin-bottom: 10px;'>Atherosclerosis Progression (Artery Narrowing)</h4>
+            <p style='color: #94A3B8; font-size: 0.82rem; line-height: 1.5;'>
+                High systemic blood pressure (systolic resistance) combined with high circulating serum cholesterol grades acts as an arterial catalyst. Over time, lipid particles infiltrate damaged vascular endothelium layers, triggering local macrophages to build calcified plaques.
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+        if os.path.exists(narrowing_path):
+            st.image(narrowing_path, use_column_width=True, caption="Biomarker Pathways: Vascular Endothelium Plaque Infiltration & Vessel Stiffening")
+        st.markdown("</div>", unsafe_allow_html=True)
+        
+    with col_story2:
+        st.markdown("<div class='narrative-container' style='height: 480px; display: flex; flex-direction: column; justify-content: space-between; margin-bottom: 0;'>", unsafe_allow_html=True)
+        st.markdown("""
+        <div>
+            <h4 style='color: #E63946; font-size: 1rem; margin-top: 0; margin-bottom: 10px;'>Cardiovascular Strain Architectures</h4>
+            <p style='color: #94A3B8; font-size: 0.82rem; line-height: 1.5;'>
+                Systemic cardiovascular strain is rarely localized to a single vector. Plaque accumulation, arterial resistance, and muscular thickening work in lockstep to increase overall myocardial workload. This can manifest as coronary artery blockages, valve leakage, heart muscle failure, or irregular cardiac rhythm strains.
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+        if os.path.exists(disease_types_path):
+            st.image(disease_types_path, use_column_width=True, caption="Integrated Diagnostic Map: Intersecting Vascular Strain & Heart Diseases")
+        st.markdown("</div>", unsafe_allow_html=True)
+
+
+# ==================== SECTION 7: RECOMMENDATIONS ====================
+def render_recommendations():
+    st.markdown("<div style='margin-top: 80px;'></div>", unsafe_allow_html=True)
+    st.markdown("""
+    <div style='text-align: center; margin-bottom: 40px;'>
+        <h2 class='scrolly-title' style='font-size: 2rem; margin: 0 0 10px 0;'>4. Preventative Health Interventions</h2>
+        <p style='color: #94A3B8; font-size: 1rem; max-width: 600px; margin: 0 auto;'>Targeted physiological safeguards designed to buffer systemic vascular wear.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Render static baseline or patient-specific suggestions if analyzed
+    profile = st.session_state.patient_profile if st.session_state.analyzed else {
+        'ap_hi': 120, 'ap_lo': 80, 'cholesterol': 1, 'active': 1, 'smoke': 0
+    }
     
     col_rec1, col_rec2 = st.columns(2, gap="large")
     
     with col_rec1:
         st.markdown("""
-        <h4 style='color: #00f2fe; font-size: 0.95rem; margin-top: 0;'>Hemodynamic & Metabolic Actions</h4>
-        <ul style='color: #94A3B8; font-size: 0.88rem; line-height: 1.6; padding-left: 20px; margin: 0;'>
+        <div class="narrative-container" style="min-height: 280px; margin-bottom: 0;">
+            <h4 style='color: #00f2fe; font-size: 0.95rem; margin-top: 0; margin-bottom: 15px;'>Hemodynamic & Metabolic Actions</h4>
+            <ul style='color: #94A3B8; font-size: 0.88rem; line-height: 1.65; padding-left: 20px; margin: 0;'>
         """, unsafe_allow_html=True)
         
         if profile['ap_hi'] >= 130 or profile['ap_lo'] >= 80:
@@ -592,12 +784,13 @@ def show_dashboard():
         else:
             st.markdown("<li><b>Lipid Homeostasis:</b> Maintain healthy dietary fat balances.</li>", unsafe_allow_html=True)
             
-        st.markdown("</ul>", unsafe_allow_html=True)
+        st.markdown("</ul></div>", unsafe_allow_html=True)
         
     with col_rec2:
         st.markdown("""
-        <h4 style='color: #E63946; font-size: 0.95rem; margin-top: 0;'>Lifestyle & Cellular Safeguards</h4>
-        <ul style='color: #94A3B8; font-size: 0.88rem; line-height: 1.6; padding-left: 20px; margin: 0;'>
+        <div class="narrative-container" style="min-height: 280px; margin-bottom: 0;">
+            <h4 style='color: #E63946; font-size: 0.95rem; margin-top: 0; margin-bottom: 15px;'>Lifestyle & Cellular Safeguards</h4>
+            <ul style='color: #94A3B8; font-size: 0.88rem; line-height: 1.65; padding-left: 20px; margin: 0;'>
         """, unsafe_allow_html=True)
         
         if profile['active'] == 0:
@@ -610,51 +803,12 @@ def show_dashboard():
         else:
             st.markdown("<li><b>Endothelial Integrity Preserved:</b> Abstinence from tobacco products reduces standard lifetime stroke risk coefficients.</li>", unsafe_allow_html=True)
             
-        st.markdown("</ul>", unsafe_allow_html=True)
-        
-    st.markdown("</div>", unsafe_allow_html=True)
-    
-    # ==================== SECTION 5 — SCROLL-BASED HEALTH STORYTELLING ====================
-    st.markdown("<div style='margin-top: 40px;'></div>", unsafe_allow_html=True)
-    st.markdown("""
-    <div style='text-align: center; margin-bottom: 30px;'>
-        <h2 class='clinical-gradient-text' style='font-size: 2rem; margin: 0 0 10px 0;'>Arterial Strains & Pathology Mechanics</h2>
-        <p style='color: #94A3B8; font-size: 1rem; max-width: 600px; margin: 0 auto;'>Visualizing the biological pathways through which biometric abnormalities escalate into chronic cardiovascular conditions.</p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    col_story1, col_story2 = st.columns(2, gap="large")
-    
-    with col_story1:
-        st.markdown("<div class='clinical-glass' style='height: 480px; display: flex; flex-direction: column; justify-content: space-between;'>", unsafe_allow_html=True)
-        st.markdown("""
-        <div>
-            <h4 style='color: #00f2fe; font-size: 1rem; margin-top: 0; margin-bottom: 10px;'>Atherosclerosis Progression (Artery Narrowing)</h4>
-            <p style='color: #94A3B8; font-size: 0.82rem; line-height: 1.5;'>
-                High systemic blood pressure (systolic resistance) combined with high circulating serum cholesterol grades acts as an arterial catalyst. Over time, lipid particles infiltrate damaged vascular endothelium layers, triggering local macrophages to build calcified plaques.
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-        if os.path.exists(narrowing_path):
-            st.image(narrowing_path, use_column_width=True, caption="Biomarker Pathways: Vascular Endothelium Plaque Infiltration & Vessel Stiffening")
-        st.markdown("</div>", unsafe_allow_html=True)
-        
-    with col_story2:
-        st.markdown("<div class='clinical-glass' style='height: 480px; display: flex; flex-direction: column; justify-content: space-between;'>", unsafe_allow_html=True)
-        st.markdown("""
-        <div>
-            <h4 style='color: #E63946; font-size: 1rem; margin-top: 0; margin-bottom: 10px;'>Cardiovascular Strain Architectures</h4>
-            <p style='color: #94A3B8; font-size: 0.82rem; line-height: 1.5;'>
-                Systemic cardiovascular strain is rarely localized to a single vector. Plaque accumulation, arterial resistance, and muscular thickening work in lockstep to increase overall myocardial workload. This can manifest as coronary artery blockages, valve leakage, heart muscle failure, or irregular cardiac rhythm strains.
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-        if os.path.exists(disease_types_path):
-            st.image(disease_types_path, use_column_width=True, caption="Integrated Diagnostic Map: Intersecting Vascular Strain & Heart Diseases")
-        st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown("</ul></div>", unsafe_allow_html=True)
 
-    # ==================== SECTION 8 — VISUAL HEALTH EDUCATION ====================
-    st.markdown("<div class='clinical-glass' style='margin-top: 25px;'>", unsafe_allow_html=True)
+
+# ==================== SECTION 8: VISUAL HEALTH EDUCATION ====================
+def render_visual_anatomy():
+    st.markdown("<div class='narrative-container' style='margin-top: 40px;'>", unsafe_allow_html=True)
     st.markdown("<h3 style='color: #FFFFFF; font-size: 1.15rem; margin-top: 0; margin-bottom: 15px;'>🫀 Myocardial Blood Supply & Anatomy Mechanics</h3>", unsafe_allow_html=True)
     
     col_edu1, col_edu2 = st.columns([1, 1], gap="large")
@@ -679,13 +833,15 @@ def show_dashboard():
         """, unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
-    # ==================== SECTION 9 — FOOTER & RESOURCES ====================
+
+# ==================== SECTION 9: FOOTER ====================
+def render_footer():
     st.markdown("""
-    <hr style='border-color: rgba(226, 232, 240, 0.08); margin: 50px 0 20px 0;'>
+    <hr style='border-color: rgba(226, 232, 240, 0.08); margin: 60px 0 20px 0;'>
     <div style='display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px; font-size: 0.75rem; color: #64748B;'>
         <div>
             <h4 style='color: #94A3B8; font-size: 0.85rem; margin: 0 0 10px 0;'>CardioVision AI Portfolio</h4>
-            <p style='margin: 0;'>Engineered and Designed as an interactive Recruiter-Assist demonstration.</p>
+            <p style='margin: 0;'>Engineered and Designed as an interactive scrollytelling experience.</p>
             <p style='margin: 3px 0 0 0;'>Code Repository: <a href='https://github.com/aryan742/cardiovision-ai' target='_blank' style='color: #00f2fe; text-decoration: none;'>GitHub</a></p>
         </div>
         <div>
@@ -701,64 +857,6 @@ def show_dashboard():
     <div style='margin-top: 30px; text-align: center; font-size: 0.7rem; color: #475569;'>© 2026 CardioVision AI Platform. Fully Open-Source MIT License.</div>
     """, unsafe_allow_html=True)
 
-# Main Application Router
-def main():
-    # Sidebar Status Tracker & Reset Controls
-    with st.sidebar:
-        st.markdown("""
-        <h2 style='text-align: center; color: #FFFFFF; font-weight: 800; margin-top: 15px;'>🫀 CardioVision AI</h2>
-        <p style='text-align: center; color: #64748B; font-size: 0.85rem; margin-top: -10px;'>Vascular Intelligence Portal</p>
-        <hr style='border-color: rgba(226, 232, 240, 0.08); margin: 15px 0;'>
-        """, unsafe_allow_html=True)
-        
-        # Navigation buttons that update app steps natively
-        if st.button("Hero Interface", key="nav_hero_btn"):
-            st.session_state.step = 'hero'
-            st.rerun()
-        if st.button("Diagnostics Portal", key="nav_diag_btn"):
-            st.session_state.step = 'inputs'
-            st.rerun()
-            
-        st.markdown("<hr style='border-color: rgba(226, 232, 240, 0.08); margin: 25px 0;'>", unsafe_allow_html=True)
-        
-        st.markdown("### Model Diagnostics")
-        if predictor:
-            st.markdown(f"""
-            <div style='background-color: #060912; border: 1px solid rgba(226, 232, 240, 0.08); border-radius: 12px; padding: 16px;'>
-                <div style='display: flex; align-items: center; gap: 8px;'>
-                    <span style='height: 8px; width: 8px; background-color: #2DD4BF; border-radius: 50%; display: inline-block; box-shadow: 0 0 8px #2DD4BF;'></span>
-                    <span style='font-size: 0.8rem; font-weight: 800; color: #FFFFFF; letter-spacing: 0.05em;'>INTELLIGENCE ONLINE</span>
-                </div>
-                <div style='font-size: 0.72rem; color: #94A3B8; margin-top: 12px; line-height: 1.5;'>
-                    <b>Classifier Engine:</b> {sys_meta['model_name']}<br>
-                    <b>Target ROC-AUC:</b> {sys_meta['roc_auc']:.2%}<br>
-                    <b>Database Cohorts:</b> {sys_meta['dataset_size']:,} records
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-        else:
-            st.markdown("""
-            <div style='background-color: rgba(230, 57, 70, 0.05); border: 1px solid rgba(230, 57, 70, 0.25); border-radius: 12px; padding: 16px;'>
-                <div style='display: flex; align-items: center; gap: 8px;'>
-                    <span style='height: 8px; width: 8px; background-color: #E63946; border-radius: 50%; display: inline-block; box-shadow: 0 0 8px #E63946;'></span>
-                    <span style='font-size: 0.8rem; font-weight: 800; color: #FFFFFF;'>SYSTEM OFFLINE</span>
-                </div>
-                <p style='font-size: 0.7rem; color: #F87171; margin-top: 8px; line-height: 1.4;'>Model metrics not found in models/ directory. Run <code>python main.py</code> to train the classifier engine.</p>
-            </div>
-            """, unsafe_allow_html=True)
-            
-        st.markdown("<div style='margin-top: 100px;'></div>", unsafe_allow_html=True)
-        st.markdown("<p style='text-align: center; font-size: 0.68rem; color: #475569;'>Portfolio Showcase | Recruiter-Grade Prototype</p>", unsafe_allow_html=True)
-
-    # Route screens based on Step States
-    if st.session_state.step == 'hero':
-        show_hero()
-    elif st.session_state.step == 'inputs':
-        show_inputs()
-    elif st.session_state.step == 'analyzing':
-        show_analysis_loader()
-    elif st.session_state.step == 'dashboard':
-        show_dashboard()
 
 if __name__ == "__main__":
     main()
