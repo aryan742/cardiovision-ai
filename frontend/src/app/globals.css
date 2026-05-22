@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-plus-jakarta-sans), "Inter", sans-serif;
+  
+  --color-coral-500: #E63946;
+  --color-teal-400: #00f2fe;
+  --color-dark-900: #03050b;
+  --color-dark-800: #0a0e1c;
+  --color-slate-400: #94a3b8;
+  --color-slate-300: #cbd5e1;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    background-color: var(--color-dark-900);
+    color: var(--color-slate-300);
+  }
+  
+  body {
+    background-color: transparent;
+    overflow-x: hidden;
+  }
+  
+  ::selection {
+    background: rgba(230, 57, 70, 0.3);
+    color: #fff;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-dark-800/60 backdrop-blur-xl border border-white/5 rounded-3xl p-8 shadow-2xl;
+  }
+  
+  .glass-input {
+    @apply w-full bg-black/30 border border-white/10 rounded-2xl px-4 py-3 text-white transition-all focus:border-teal-400 focus:ring-1 focus:ring-teal-400 focus:outline-none;
+  }
+  
+  .glass-select {
+    @apply w-full bg-black/30 border border-white/10 rounded-2xl px-4 py-3 text-white transition-all focus:border-teal-400 focus:ring-1 focus:ring-teal-400 focus:outline-none appearance-none;
+  }
+  
+  .btn-primary {
+    @apply bg-gradient-to-br from-coral-500 to-red-800 text-white font-bold rounded-full px-8 py-4 uppercase tracking-widest transition-all shadow-[0_10px_30px_rgba(230,57,70,0.4)] hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(230,57,70,0.6)];
+  }
+  
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-br from-white to-slate-400;
+  }
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
