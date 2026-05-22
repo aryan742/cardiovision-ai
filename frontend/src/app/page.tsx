@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { useEffect, useState } from "react";
+import { motion, useScroll, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import ThematicHeart from "@/components/ThematicHeart";
-import { Activity, HeartPulse, Dna, FileWarning, ShieldCheck, ChevronDown } from "lucide-react";
+import { Activity, HeartPulse, Dna, FileWarning, ShieldCheck, ChevronDown, CheckCircle2 } from "lucide-react";
+import Image from "next/image";
 
 export default function Home() {
   const { scrollYProgress } = useScroll();
@@ -26,50 +27,64 @@ export default function Home() {
   });
   
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisStep, setAnalysisStep] = useState(0);
   const [analysisComplete, setAnalysisComplete] = useState(false);
   const [result, setResult] = useState<any>(null);
   
-  // Track scroll for the 3D heart
   useEffect(() => {
     return scrollYProgress.onChange((latest) => {
       setScrollProgress(latest);
     });
   }, [scrollYProgress]);
 
+  const loadingMessages = [
+    "Analyzing cardiovascular biomarkers...",
+    "Evaluating vascular health patterns...",
+    "Assessing endothelial stress factors...",
+    "Generating predictive cardiovascular profile..."
+  ];
+
   const handlePredict = async () => {
     setIsAnalyzing(true);
     setAnalysisComplete(false);
+    setAnalysisStep(0);
     
-    // Convert age to days as expected by the model
-    const payload = {
-      ...formData,
-      age: formData.age * 365.25
-    };
+    // Cycle through messages
+    const interval = setInterval(() => {
+      setAnalysisStep(prev => Math.min(prev + 1, loadingMessages.length - 1));
+    }, 800);
+    
+    const payload = { ...formData, age: formData.age * 365.25 };
     
     try {
-      // Fake delay for cinematic effect
-      await new Promise((resolve) => setTimeout(resolve, 3500));
-      
+      await new Promise((resolve) => setTimeout(resolve, 3200));
       const response = await axios.post("http://localhost:8000/api/predict", payload);
       setResult(response.data);
       setAnalysisComplete(true);
       
-      // Auto scroll to results
       setTimeout(() => {
-        window.scrollBy({ top: 800, behavior: "smooth" });
-      }, 500);
+        window.scrollBy({ top: 600, behavior: "smooth" });
+      }, 300);
     } catch (error) {
       console.error("Prediction failed:", error);
     } finally {
+      clearInterval(interval);
       setIsAnalyzing(false);
     }
   };
 
   const isHighRisk = result?.risk_level === "High Risk";
+  const confidence = result ? (result.confidence > 99 ? 99.1 : result.confidence).toFixed(1) : 0;
+  const riskProb = result ? result.risk_probability.toFixed(1) : 0;
+
+  // Stagger variants for smooth scroll reveals
+  const fadeUpVariant = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" as const } }
+  };
 
   return (
-    <main className="relative min-h-screen pb-32">
-      {/* 3D Background Element */}
+    <main className="relative min-h-screen pb-32 overflow-hidden">
       <ThematicHeart 
         scrollProgress={scrollProgress} 
         isAnalyzing={isAnalyzing} 
@@ -79,277 +94,276 @@ export default function Home() {
       <div className="relative z-10 max-w-6xl mx-auto px-6">
         
         {/* 1. HERO SECTION */}
-        <section className="min-h-screen flex flex-col justify-center pt-20">
+        <section className="min-h-[85vh] flex flex-col justify-center pt-24 pb-12">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: "easeOut" }}
+            initial="hidden" animate="visible" variants={fadeUpVariant}
             className="max-w-2xl"
           >
-            <div className="inline-flex items-center gap-3 bg-teal-400/10 border border-teal-400/30 rounded-full px-4 py-2 mb-8 backdrop-blur-md">
-              <div className="w-2 h-2 bg-coral-500 rounded-full animate-ping" />
-              <span className="text-teal-400 text-xs font-bold tracking-widest uppercase">Diagnostic Engine Online</span>
+            <div className="inline-flex items-center gap-3 bg-teal-400/5 border border-teal-400/20 rounded-full px-4 py-2 mb-8">
+              <div className="w-1.5 h-1.5 bg-teal-400 rounded-full animate-pulse" />
+              <span className="text-teal-400 text-xs font-semibold tracking-wide uppercase">Clinical Assessment Active</span>
             </div>
             
-            <h1 className="text-6xl md:text-7xl font-extrabold tracking-tight mb-6 leading-tight">
-              CardioVision <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500">AI</span>
+            <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-6 text-white leading-tight">
+              Cardiovascular Intelligence
             </h1>
             
-            <p className="text-xl text-slate-400 leading-relaxed mb-10 max-w-xl">
-              A cinematic clinical intelligence platform. We translate complex physiological biomarkers into predictive cardiovascular insights using production-grade machine learning.
+            <p className="text-lg text-slate-400 leading-relaxed mb-10 max-w-xl">
+              An advanced analytical tool designed to assess physiological indicators. We analyze standard health metrics to provide a clearer picture of your cardiovascular health trajectory.
             </p>
             
             <button 
-              onClick={() => window.scrollBy({ top: window.innerHeight, behavior: 'smooth' })}
-              className="btn-primary"
+              onClick={() => window.scrollBy({ top: window.innerHeight * 0.7, behavior: 'smooth' })}
+              className="bg-white text-dark-900 font-semibold rounded-full px-8 py-3.5 transition-all hover:bg-slate-200"
             >
-              Start Clinical Assessment
+              Begin Assessment
             </button>
           </motion.div>
-          
-          <motion.div 
-            animate={{ y: [0, 10, 0] }}
-            transition={{ repeat: Infinity, duration: 2 }}
-            className="absolute bottom-10 left-1/2 -translate-x-1/2 text-slate-500"
-          >
-            <ChevronDown size={32} />
-          </motion.div>
         </section>
 
-        {/* 2. INTRODUCTION */}
-        <section className="min-h-[50vh] flex items-center justify-center py-20">
-          <motion.div 
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true, margin: "-100px" }}
-            className="text-center max-w-3xl"
-          >
-            <h2 className="text-4xl font-bold mb-6">Beyond the <span className="text-teal-400">Black Box</span></h2>
-            <p className="text-lg text-slate-400 leading-relaxed">
-              Modern medicine requires transparency. By integrating robust predictive modeling with an immersive, step-by-step diagnostic journey, CardioVision AI reveals the physiological narrative driving cardiovascular deterioration before it becomes critical.
-            </p>
-          </motion.div>
-        </section>
-
-        {/* 3. INTERACTIVE INPUT SECTION */}
-        <section className="min-h-screen py-20 flex flex-col justify-center">
-          <div className="mb-12">
-            <h2 className="text-4xl font-bold mb-4">Patient <span className="text-coral-500">Biomarkers</span></h2>
-            <p className="text-slate-400 text-lg">Define the clinical vector for predictive analysis.</p>
+        {/* 2. INTERACTIVE INPUT SECTION */}
+        <motion.section 
+          initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeUpVariant}
+          className="py-16"
+        >
+          <div className="mb-10">
+            <h2 className="text-3xl font-bold text-white mb-2">Patient Profile</h2>
+            <p className="text-slate-400">Enter current health metrics for an updated assessment.</p>
           </div>
 
-          <div className="glass-card">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="glass-card bg-dark-800/80">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-12">
               
               {/* Vital Signs */}
-              <div className="space-y-6">
-                <div className="flex items-center gap-2 text-teal-400 mb-4">
-                  <Activity size={20} />
-                  <h3 className="font-bold uppercase tracking-wider text-sm">Vital Signs</h3>
+              <div className="space-y-5">
+                <div className="border-b border-white/5 pb-2 mb-4">
+                  <h3 className="text-slate-300 font-medium">Demographics & Vitals</h3>
                 </div>
                 <div>
-                  <label className="block text-xs text-slate-400 mb-2 uppercase tracking-wider">Chronological Age</label>
-                  <input type="number" value={formData.age} onChange={e => setFormData({...formData, age: +e.target.value})} className="glass-input" />
+                  <div className="flex justify-between mb-2">
+                    <label className="text-sm text-slate-400">Age</label>
+                    <span className="text-sm text-white font-medium">{formData.age} years</span>
+                  </div>
+                  <input type="range" min="18" max="100" value={formData.age} onChange={e => setFormData({...formData, age: +e.target.value})} className="w-full accent-teal-400" />
                 </div>
-                <div>
-                  <label className="block text-xs text-slate-400 mb-2 uppercase tracking-wider">Biological Sex</label>
-                  <select value={formData.gender} onChange={e => setFormData({...formData, gender: +e.target.value})} className="glass-select">
-                    <option value={1}>Female</option>
-                    <option value={2}>Male</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs text-slate-400 mb-2 uppercase tracking-wider">Body Mass (kg)</label>
-                  <input type="number" value={formData.weight} onChange={e => setFormData({...formData, weight: +e.target.value})} className="glass-input" />
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm text-slate-400 mb-2">Sex</label>
+                    <select value={formData.gender} onChange={e => setFormData({...formData, gender: +e.target.value})} className="glass-select py-2">
+                      <option value={1}>Female</option>
+                      <option value={2}>Male</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm text-slate-400 mb-2">Weight (kg)</label>
+                    <input type="number" value={formData.weight} onChange={e => setFormData({...formData, weight: +e.target.value})} className="glass-input py-2" />
+                  </div>
                 </div>
               </div>
 
               {/* Hemodynamics */}
-              <div className="space-y-6">
-                <div className="flex items-center gap-2 text-coral-500 mb-4">
-                  <HeartPulse size={20} />
-                  <h3 className="font-bold uppercase tracking-wider text-sm">Hemodynamics</h3>
+              <div className="space-y-5">
+                <div className="border-b border-white/5 pb-2 mb-4">
+                  <h3 className="text-slate-300 font-medium">Blood Pressure</h3>
                 </div>
                 <div>
-                  <label className="block text-xs text-slate-400 mb-2 uppercase tracking-wider">Systolic Pressure</label>
-                  <input type="number" value={formData.ap_hi} onChange={e => setFormData({...formData, ap_hi: +e.target.value})} className="glass-input" />
+                  <div className="flex justify-between mb-2">
+                    <label className="text-sm text-slate-400">Systolic (mmHg)</label>
+                    <span className="text-sm text-white font-medium">{formData.ap_hi}</span>
+                  </div>
+                  <input type="range" min="90" max="200" value={formData.ap_hi} onChange={e => setFormData({...formData, ap_hi: +e.target.value})} className="w-full accent-coral-500" />
                 </div>
                 <div>
-                  <label className="block text-xs text-slate-400 mb-2 uppercase tracking-wider">Diastolic Pressure</label>
-                  <input type="number" value={formData.ap_lo} onChange={e => setFormData({...formData, ap_lo: +e.target.value})} className="glass-input" />
+                  <div className="flex justify-between mb-2">
+                    <label className="text-sm text-slate-400">Diastolic (mmHg)</label>
+                    <span className="text-sm text-white font-medium">{formData.ap_lo}</span>
+                  </div>
+                  <input type="range" min="60" max="130" value={formData.ap_lo} onChange={e => setFormData({...formData, ap_lo: +e.target.value})} className="w-full accent-coral-500" />
                 </div>
               </div>
 
-              {/* Biomarkers */}
-              <div className="space-y-6">
-                <div className="flex items-center gap-2 text-teal-400 mb-4">
-                  <Dna size={20} />
-                  <h3 className="font-bold uppercase tracking-wider text-sm">Metabolics</h3>
+              {/* Lab & Lifestyle */}
+              <div className="space-y-5">
+                <div className="border-b border-white/5 pb-2 mb-4">
+                  <h3 className="text-slate-300 font-medium">Labs & Lifestyle</h3>
                 </div>
-                <div>
-                  <label className="block text-xs text-slate-400 mb-2 uppercase tracking-wider">Lipid Profile</label>
-                  <select value={formData.cholesterol} onChange={e => setFormData({...formData, cholesterol: +e.target.value})} className="glass-select">
-                    <option value={1}>Grade 1 (Normal)</option>
-                    <option value={2}>Grade 2 (Elevated)</option>
-                    <option value={3}>Grade 3 (High)</option>
-                  </select>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm text-slate-400 mb-2">Cholesterol</label>
+                    <select value={formData.cholesterol} onChange={e => setFormData({...formData, cholesterol: +e.target.value})} className="glass-select py-2">
+                      <option value={1}>Normal</option>
+                      <option value={2}>Borderline</option>
+                      <option value={3}>High</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm text-slate-400 mb-2">Glucose</label>
+                    <select value={formData.gluc} onChange={e => setFormData({...formData, gluc: +e.target.value})} className="glass-select py-2">
+                      <option value={1}>Normal</option>
+                      <option value={2}>Elevated</option>
+                      <option value={3}>High</option>
+                    </select>
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-xs text-slate-400 mb-2 uppercase tracking-wider">Fasting Glucose</label>
-                  <select value={formData.gluc} onChange={e => setFormData({...formData, gluc: +e.target.value})} className="glass-select">
-                    <option value={1}>Normal</option>
-                    <option value={2}>Elevated</option>
-                    <option value={3}>Diabetic</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Lifestyle */}
-              <div className="space-y-6">
-                <div className="flex items-center gap-2 text-coral-500 mb-4">
-                  <ShieldCheck size={20} />
-                  <h3 className="font-bold uppercase tracking-wider text-sm">Lifestyle</h3>
-                </div>
-                <div>
-                  <label className="block text-xs text-slate-400 mb-2 uppercase tracking-wider">Tobacco Status</label>
-                  <select value={formData.smoke} onChange={e => setFormData({...formData, smoke: +e.target.value})} className="glass-select">
-                    <option value={0}>Non-Smoker</option>
-                    <option value={1}>Active User</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs text-slate-400 mb-2 uppercase tracking-wider">Physical Activity</label>
-                  <select value={formData.active} onChange={e => setFormData({...formData, active: +e.target.value})} className="glass-select">
-                    <option value={1}>Active Profile</option>
-                    <option value={0}>Sedentary</option>
-                  </select>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm text-slate-400 mb-2">Smoking</label>
+                    <select value={formData.smoke} onChange={e => setFormData({...formData, smoke: +e.target.value})} className="glass-select py-2">
+                      <option value={0}>No</option>
+                      <option value={1}>Yes</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm text-slate-400 mb-2">Activity</label>
+                    <select value={formData.active} onChange={e => setFormData({...formData, active: +e.target.value})} className="glass-select py-2">
+                      <option value={1}>Active</option>
+                      <option value={0}>Sedentary</option>
+                    </select>
+                  </div>
                 </div>
               </div>
 
             </div>
 
-            <div className="mt-12 flex justify-center">
-              <button 
-                onClick={handlePredict}
-                disabled={isAnalyzing}
-                className="btn-primary flex items-center gap-3 disabled:opacity-50"
-              >
+            <div className="mt-12 flex flex-col items-center border-t border-white/5 pt-8">
+              <AnimatePresence mode="wait">
                 {isAnalyzing ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Analyzing Biomarkers...
-                  </>
-                ) : "Run Diagnostic Protocol"}
-              </button>
+                  <motion.div 
+                    key="analyzing"
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                    className="flex flex-col items-center"
+                  >
+                    <div className="w-8 h-8 border-2 border-teal-400 border-t-transparent rounded-full animate-spin mb-4" />
+                    <p className="text-teal-400 font-medium tracking-wide">{loadingMessages[analysisStep]}</p>
+                  </motion.div>
+                ) : (
+                  <motion.button 
+                    key="button"
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                    onClick={handlePredict}
+                    className="bg-teal-500 hover:bg-teal-400 text-dark-900 font-bold rounded-full px-8 py-3 transition-all shadow-[0_0_20px_rgba(0,242,254,0.2)]"
+                  >
+                    Analyze Health Profile
+                  </motion.button>
+                )}
+              </AnimatePresence>
             </div>
           </div>
-        </section>
+        </motion.section>
 
-        {/* 4. AI ANALYSIS SEQUENCE & 5. RESULTS DASHBOARD */}
+        {/* 3. RESULTS DASHBOARD */}
         <AnimatePresence>
           {analysisComplete && result && (
             <motion.section 
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="py-20"
+              initial="hidden" animate="visible" variants={fadeUpVariant}
+              className="py-16"
             >
-              <div className="mb-12">
-                <h2 className="text-4xl font-bold mb-4">Clinical <span className="text-teal-400">Intelligence</span></h2>
-                <p className="text-slate-400 text-lg">Predictive inference generated from multi-variable XGBoost matrices.</p>
+              <div className="mb-10">
+                <h2 className="text-3xl font-bold text-white mb-2">Assessment Results</h2>
+                <p className="text-slate-400">Based on the provided metrics.</p>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Status Card */}
-                <div className={`glass-card flex flex-col justify-center items-center text-center ${isHighRisk ? 'border-coral-500/50 shadow-[0_0_50px_rgba(230,57,70,0.15)]' : 'border-teal-400/50'}`}>
-                  <FileWarning size={48} className={isHighRisk ? "text-coral-500 mb-6" : "text-teal-400 mb-6"} />
-                  <h3 className="text-sm font-bold uppercase tracking-widest text-slate-400 mb-4">Diagnostic Classification</h3>
-                  <h2 className={`text-3xl font-extrabold leading-tight mb-4 ${isHighRisk ? "text-coral-500" : "text-teal-400"}`}>
-                    {isHighRisk ? "CRITICAL RISK FLAGGED" : "PHYSIOLOGICAL NORMAL"}
-                  </h2>
-                  <p className="text-slate-400">Model Confidence: <strong className="text-white">{result.confidence}%</strong></p>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                {/* LEFT: Clinical Summary */}
+                <div className="glass-card bg-dark-800/90 flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-slate-400 text-sm font-medium uppercase tracking-wider mb-6">Diagnosis</h3>
+                    {isHighRisk ? (
+                      <div className="mb-4">
+                        <div className="inline-flex items-center gap-2 text-coral-500 mb-2">
+                          <FileWarning size={24} />
+                          <span className="font-bold text-lg">Elevated Risk Detected</span>
+                        </div>
+                        <p className="text-slate-300 text-sm leading-relaxed">
+                          The current biometric profile indicates factors commonly associated with increased cardiovascular strain. Preventative measures should be considered.
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="mb-4">
+                        <div className="inline-flex items-center gap-2 text-teal-400 mb-2">
+                          <CheckCircle2 size={24} />
+                          <span className="font-bold text-lg">Normal Range</span>
+                        </div>
+                        <p className="text-slate-300 text-sm leading-relaxed">
+                          The metrics provided fall within generally healthy parameters. Maintaining current lifestyle habits is recommended.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="pt-6 border-t border-white/5 mt-6">
+                    <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Model Reliability</p>
+                    <p className="text-white font-medium">{confidence}% confidence</p>
+                  </div>
                 </div>
 
-                {/* Gauge Card */}
-                <div className="glass-card lg:col-span-2 flex flex-col justify-center">
-                  <h3 className="text-sm font-bold uppercase tracking-widest text-slate-400 mb-8">Systemic Risk Coefficient</h3>
+                {/* CENTER: Risk Gauge */}
+                <div className="glass-card bg-dark-800/90 flex flex-col justify-center items-center py-12">
+                  <h3 className="text-slate-400 text-sm font-medium uppercase tracking-wider mb-8">Risk Index</h3>
                   
-                  <div className="relative h-48 flex items-end justify-center overflow-hidden">
-                    {/* Semi-circle Gauge Background */}
-                    <div className="absolute top-0 w-80 h-80 rounded-full border-[20px] border-dark-900 border-b-transparent border-l-transparent -rotate-45" />
+                  <div className="relative h-40 flex items-end justify-center overflow-hidden w-full max-w-[280px]">
+                    <div className="absolute top-0 w-full h-[280px] rounded-full border-[12px] border-white/5 border-b-transparent border-l-transparent -rotate-45" />
                     
-                    {/* Animated Gauge Fill */}
                     <motion.div 
                       initial={{ rotate: -45 }}
                       animate={{ rotate: -45 + (result.risk_probability / 100) * 180 }}
-                      transition={{ duration: 2, ease: "easeOut", delay: 0.5 }}
-                      className={`absolute top-0 w-80 h-80 rounded-full border-[20px] border-b-transparent border-l-transparent -rotate-45 ${isHighRisk ? 'border-coral-500' : 'border-teal-400'}`}
+                      transition={{ duration: 1.5, ease: "easeOut" }}
+                      className={`absolute top-0 w-full h-[280px] rounded-full border-[12px] border-b-transparent border-l-transparent -rotate-45 ${isHighRisk ? 'border-coral-500' : 'border-teal-400'}`}
                       style={{ clipPath: 'polygon(0 0, 100% 0, 100% 50%, 0 50%)' }}
                     />
                     
-                    <div className="absolute bottom-0 text-center pb-4">
-                      <motion.span 
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 2 }}
-                        className="text-6xl font-black text-white"
-                      >
-                        {result.risk_probability}%
-                      </motion.span>
+                    <div className="absolute bottom-0 text-center pb-2">
+                      <span className="text-5xl font-bold text-white">{riskProb}%</span>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              {/* 6. EXPLAINABILITY SECTION */}
-              <div className="mt-20 mb-12">
-                <h2 className="text-3xl font-bold mb-4">Why This <span className="text-coral-500">Prediction?</span></h2>
-                <p className="text-slate-400 text-lg">Algorithmic attribution mapped to physiological factors.</p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {formData.ap_hi >= 130 && (
-                  <div className="glass-card">
-                    <h4 className="text-coral-500 font-bold mb-2">Hypertensive Strain</h4>
-                    <p className="text-sm text-slate-400">Systolic pressure of {formData.ap_hi} mmHg exerts severe mechanical stress on vascular endothelium, accelerating plaque deposition.</p>
-                    <div className="mt-4 text-xs font-bold text-coral-500 uppercase tracking-wider">+ High Impact Weight</div>
-                  </div>
-                )}
-                
-                {formData.cholesterol >= 2 && (
-                  <div className="glass-card">
-                    <h4 className="text-coral-500 font-bold mb-2">Lipid Accumulation</h4>
-                    <p className="text-sm text-slate-400">Grade {formData.cholesterol} serum cholesterol provides the building blocks for atherosclerotic blockages within narrowed arteries.</p>
-                    <div className="mt-4 text-xs font-bold text-coral-500 uppercase tracking-wider">+ Moderate Impact Weight</div>
-                  </div>
-                )}
-
-                {formData.smoke === 1 && (
-                  <div className="glass-card">
-                    <h4 className="text-coral-500 font-bold mb-2">Endothelial Toxicity</h4>
-                    <p className="text-sm text-slate-400">Active tobacco use induces immediate arterial vasoconstriction and chronic systemic inflammation.</p>
-                    <div className="mt-4 text-xs font-bold text-coral-500 uppercase tracking-wider">+ High Impact Weight</div>
-                  </div>
-                )}
-              </div>
-
-              {/* 7. RECOMMENDATIONS */}
-              <div className="mt-20">
-                <div className="glass-card bg-gradient-to-br from-dark-800 to-dark-900 border-teal-400/20">
-                  <h3 className="text-2xl font-bold text-white mb-6">Preventative Architecture</h3>
-                  <ul className="space-y-4 text-slate-300">
-                    <li className="flex items-start gap-3">
-                      <ShieldCheck className="text-teal-400 shrink-0 mt-1" size={20} />
-                      <p><strong>Vasodilation Protocols:</strong> Engage in 150+ minutes of zone-2 cardiovascular training weekly to expand capillary networks and reduce resting systemic pressure.</p>
-                    </li>
-                    {isHighRisk && (
-                      <li className="flex items-start gap-3">
-                        <ShieldCheck className="text-teal-400 shrink-0 mt-1" size={20} />
-                        <p><strong>Clinical Escalarion:</strong> Based on the high-risk coefficient, an immediate consultation with a cardiologist is recommended for advanced lipid paneling and potential pharmacological intervention.</p>
-                      </li>
+                {/* RIGHT: Key Factors */}
+                <div className="glass-card bg-dark-800/90">
+                  <h3 className="text-slate-400 text-sm font-medium uppercase tracking-wider mb-6">Key Observations</h3>
+                  
+                  <div className="space-y-4">
+                    {formData.ap_hi >= 130 ? (
+                      <div className="flex gap-3">
+                        <div className="w-1.5 h-1.5 rounded-full bg-coral-500 mt-2 shrink-0" />
+                        <div>
+                          <p className="text-white text-sm font-medium mb-1">Blood Pressure</p>
+                          <p className="text-slate-400 text-xs leading-relaxed">Levels are elevated, putting extra workload on the heart and arteries.</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex gap-3">
+                        <div className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0" />
+                        <div>
+                          <p className="text-white text-sm font-medium mb-1">Blood Pressure</p>
+                          <p className="text-slate-400 text-xs leading-relaxed">Within a healthy baseline range.</p>
+                        </div>
+                      </div>
                     )}
-                  </ul>
+
+                    {formData.cholesterol > 1 && (
+                      <div className="flex gap-3">
+                        <div className="w-1.5 h-1.5 rounded-full bg-coral-500 mt-2 shrink-0" />
+                        <div>
+                          <p className="text-white text-sm font-medium mb-1">Cholesterol Profile</p>
+                          <p className="text-slate-400 text-xs leading-relaxed">Higher than optimal, which may contribute to plaque buildup over time.</p>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {formData.smoke === 1 && (
+                      <div className="flex gap-3">
+                        <div className="w-1.5 h-1.5 rounded-full bg-coral-500 mt-2 shrink-0" />
+                        <div>
+                          <p className="text-white text-sm font-medium mb-1">Tobacco Use</p>
+                          <p className="text-slate-400 text-xs leading-relaxed">A major independent risk factor for vascular damage.</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
+                
               </div>
             </motion.section>
           )}
