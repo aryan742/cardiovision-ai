@@ -17,7 +17,7 @@ export default function Home() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
 
-  // Deep, premium 520vh scroll track to give heart asset maximum screen time and pacing continuity
+  // Balanced 320vh track for smooth, continuous scrollytelling beats
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"]
@@ -30,32 +30,18 @@ export default function Home() {
     });
   }, [scrollYProgress]);
 
-  // SMOOTH TRANSITIONS & FADES (0.0 to 1.0 of the 520vh sticky track)
-  
-  // 1. Hero text fade: slowly fades out as scroll starts
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.18], [1, 0]);
-  const heroY = useTransform(scrollYProgress, [0, 0.18], [0, -35]);
+  // SMOOTH STORIES OVERLAPS (0.0 to 1.0)
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.22], [1, 0]);
+  const heroY = useTransform(scrollYProgress, [0, 0.22], [0, -30]);
 
-  // 2. Anatomy reveal: slowly transitions in, remains visible, and slowly fades out
-  const revealOpacity = useTransform(scrollYProgress, [0.18, 0.25, 0.42, 0.48], [0, 1, 1, 0]);
-  const revealX = useTransform(scrollYProgress, [0.18, 0.25, 0.42, 0.48], [-25, 0, 0, -25]);
+  const revealOpacity = useTransform(scrollYProgress, [0.22, 0.28, 0.46, 0.52], [0, 1, 1, 0]);
+  const revealX = useTransform(scrollYProgress, [0.22, 0.28, 0.46, 0.52], [-20, 0, 0, -20]);
 
-  // 3. Circulation flow: slowly fades in right after, overlaps, and fades out
-  const circOpacity = useTransform(scrollYProgress, [0.44, 0.52, 0.68, 0.74], [0, 1, 1, 0]);
-  const circX = useTransform(scrollYProgress, [0.44, 0.52, 0.68, 0.74], [25, 0, 0, 25]);
+  const circOpacity = useTransform(scrollYProgress, [0.48, 0.54, 0.72, 0.78], [0, 1, 1, 0]);
+  const circX = useTransform(scrollYProgress, [0.48, 0.54, 0.72, 0.78], [20, 0, 0, 20]);
 
-  // 4. Micro Complexity: floats in, stays, and dissolves as the dashboard arrives
-  const detailOpacity = useTransform(scrollYProgress, [0.70, 0.76, 0.85, 0.88], [0, 1, 1, 0]);
-  const detailY = useTransform(scrollYProgress, [0.70, 0.76, 0.85, 0.88], [25, 0, 0, -25]);
-
-  // 5. Embedded Dashboard Fade-in (0.85 to 1.0)
-  // Dashboard is overlaid DIRECTLY on top of the reassembled sticky heart canvas!
-  const dashboardOpacity = useTransform(scrollYProgress, [0.85, 0.90], [0, 1]);
-  const dashboardY = useTransform(scrollYProgress, [0.85, 0.90], [40, 0]);
-  
-  // Heart Canvas drift & scale down inside the dashboard layout (so the heart remains visible!)
-  const heartScale = useTransform(scrollYProgress, [0.84, 0.90], [1, 0.7]);
-  const heartX = useTransform(scrollYProgress, [0.84, 0.90], [0, 250]); // drifts to the right to leave space for form
+  const detailOpacity = useTransform(scrollYProgress, [0.74, 0.80, 0.94, 1.0], [0, 1, 1, 0]);
+  const detailY = useTransform(scrollYProgress, [0.74, 0.80, 0.94, 1.0], [20, 0, 0, -20]);
 
   // Interactive Clinical Model States
   const [formData, setFormData] = useState({
@@ -116,8 +102,8 @@ export default function Home() {
     <main className="relative bg-[#050505] text-white selection:bg-[#FF2D55]/30 overflow-x-hidden font-sans">
       <AppleNavbar />
 
-      {/* 1. HERO & HEART SEQUENCE SECTION (First 520vh sticky track) */}
-      <div ref={containerRef} className="relative h-[520vh] w-full">
+      {/* 1. HERO & HEART SEQUENCE SECTION (320vh track for smooth visual pacing) */}
+      <div ref={containerRef} className="relative h-[320vh] w-full">
         
         {/* Full-Screen Sticky Viewport */}
         <div className="sticky top-0 left-0 w-full h-screen overflow-hidden z-10 flex items-center justify-center bg-[#050505]">
@@ -125,16 +111,11 @@ export default function Home() {
           {/* Ambient Red Glow Layer */}
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(139,0,0,0.15)_0%,rgba(5,5,5,0)_70%)] pointer-events-none z-10" />
 
-          {/* Sequence canvas component wrapped in drifts/scales for seamless dashboard anchoring */}
-          <motion.div 
-            style={{ scale: heartScale, x: heartX }} 
-            className="absolute inset-0 w-full h-full"
-          >
-            <HeartSequenceCanvas 
-              scrollProgress={scrollProgress} 
-              onLoadingComplete={() => setIsLoaded(true)} 
-            />
-          </motion.div>
+          {/* Sequence canvas component */}
+          <HeartSequenceCanvas 
+            scrollProgress={scrollProgress} 
+            onLoadingComplete={() => setIsLoaded(true)} 
+          />
 
           {/* SCROLL-LINKED STORYTELLING OVERLAYS */}
           
@@ -146,7 +127,7 @@ export default function Home() {
             <span className="text-[11px] text-teal-400 font-mono tracking-[0.3em] uppercase block mb-4">
               Biomedical Telemetry Core
             </span>
-            <h1 className="text-6xl md:text-8xl font-bold tracking-tight text-white mb-6">
+            <h1 className="text-6xl md:text-8xl font-bold tracking-tight text-white mb-6 font-sans">
               Human Heart
             </h1>
             <p className="text-xl md:text-2xl text-[#FF2D55] font-light tracking-wide mb-3">
@@ -210,323 +191,384 @@ export default function Home() {
             </p>
           </motion.div>
 
-          {/* 2. REASSEMBLY & EMBEDDED CLINICAL DASHBOARD (Fades in over sticky heart canvas) */}
-          <motion.div
-            style={{ opacity: dashboardOpacity, y: dashboardY }}
-            className="absolute inset-0 z-30 pointer-events-auto flex items-center justify-center p-6 md:p-12 overflow-y-auto hide-scrollbar"
-          >
-            <div className="max-w-[1300px] w-full mx-auto relative pt-16">
-              
-              {/* Soft red glow behind inputs */}
-              <div className="absolute top-1/4 left-10 w-96 h-96 bg-[#8B0000]/10 rounded-full blur-[80px] pointer-events-none -z-10" />
-
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-                
-                {/* Input Matrix Config Card */}
-                <div className="lg:col-span-8 glass-card bg-[#0A0A0C]/75 border-white/5 rounded-3xl p-8 md:p-10 shadow-2xl relative overflow-hidden flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center justify-between border-b border-white/5 pb-4 mb-8">
-                      <div className="flex items-center gap-3">
-                        <span className="text-[#FF2D55] font-bold font-mono text-sm">[04]</span>
-                        <h3 className="text-white font-bold uppercase tracking-widest text-xs">Biometric Matrix Configuration</h3>
-                      </div>
-                      <span className="text-[10px] text-teal-400 font-mono">DYNAMIC TELEMETRY LINK // ACTIVE</span>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                      
-                      {/* Demographics */}
-                      <div className="space-y-4">
-                        <h4 className="text-[10px] text-teal-400 font-mono tracking-widest uppercase border-b border-white/5 pb-2">Bioprofile Vector</h4>
-                        
-                        <div>
-                          <div className="flex justify-between mb-2">
-                            <label className="text-[10px] text-white/50 uppercase tracking-widest font-mono">Patient Age</label>
-                            <span className="text-[10px] text-teal-400 font-mono font-bold">{formData.age} years</span>
-                          </div>
-                          <input type="range" min="18" max="100" value={formData.age} onChange={e => setFormData({...formData, age: +e.target.value})} className="w-full accent-[#FF2D55] h-1 rounded-lg appearance-none bg-white/5 cursor-pointer" />
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <label className="block text-[10px] text-white/50 uppercase tracking-widest font-mono mb-2">Sex</label>
-                            <select value={formData.gender} onChange={e => setFormData({...formData, gender: +e.target.value})} className="glass-select bg-black/60 py-2.5 rounded-xl border-white/5">
-                              <option value={1}>Female</option>
-                              <option value={2}>Male</option>
-                            </select>
-                          </div>
-                          <div>
-                            <label className="block text-[10px] text-white/50 uppercase tracking-widest font-mono mb-2">Weight (kg)</label>
-                            <input type="number" value={formData.weight} onChange={e => setFormData({...formData, weight: +e.target.value})} className="glass-input bg-black/60 py-2.5 rounded-xl border-white/5" />
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Hemodynamics */}
-                      <div className="space-y-4">
-                        <h4 className="text-[10px] text-teal-400 font-mono tracking-widest uppercase border-b border-white/5 pb-2">Vascular Stress Indices</h4>
-                        
-                        <div>
-                          <div className="flex justify-between mb-2">
-                            <label className="text-[10px] text-white/50 uppercase tracking-widest font-mono">Systolic (mmHg)</label>
-                            <span className="text-[10px] text-[#FF2D55] font-mono font-bold">{formData.ap_hi} mmHg</span>
-                          </div>
-                          <input type="range" min="90" max="200" value={formData.ap_hi} onChange={e => setFormData({...formData, ap_hi: +e.target.value})} className="w-full accent-[#FF2D55] h-1 rounded-lg appearance-none bg-white/5 cursor-pointer" />
-                        </div>
-
-                        <div>
-                          <div className="flex justify-between mb-2">
-                            <label className="text-[10px] text-white/50 uppercase tracking-widest font-mono">Diastolic (mmHg)</label>
-                            <span className="text-[10px] text-[#FF2D55] font-mono font-bold">{formData.ap_lo} mmHg</span>
-                          </div>
-                          <input type="range" min="60" max="130" value={formData.ap_lo} onChange={e => setFormData({...formData, ap_lo: +e.target.value})} className="w-full accent-[#FF2D55] h-1 rounded-lg appearance-none bg-white/5 cursor-pointer" />
-                        </div>
-                      </div>
-
-                      {/* Lab Attributes */}
-                      <div className="space-y-4 md:col-span-2 pt-4 border-t border-white/5 grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div>
-                          <label className="block text-[9px] text-white/50 uppercase tracking-widest font-mono mb-2">Serum Lipid</label>
-                          <select value={formData.cholesterol} onChange={e => setFormData({...formData, cholesterol: +e.target.value})} className="glass-select bg-black/60 rounded-xl border-white/5">
-                            <option value={1}>Normal</option>
-                            <option value={2}>Borderline</option>
-                            <option value={3}>Critical</option>
-                          </select>
-                        </div>
-
-                        <div>
-                          <label className="block text-[9px] text-white/50 uppercase tracking-widest font-mono mb-2">Glucose Index</label>
-                          <select value={formData.gluc} onChange={e => setFormData({...formData, gluc: +e.target.value})} className="glass-select bg-black/60 rounded-xl border-white/5">
-                            <option value={1}>Normal</option>
-                            <option value={2}>Elevated</option>
-                            <option value={3}>Diabetic</option>
-                          </select>
-                        </div>
-
-                        <div>
-                          <label className="block text-[9px] text-white/50 uppercase tracking-widest font-mono mb-2">Tobacco Vector</label>
-                          <select value={formData.smoke} onChange={e => setFormData({...formData, smoke: +e.target.value})} className="glass-select bg-black/60 rounded-xl border-white/5">
-                            <option value={0}>No</option>
-                            <option value={1}>Active</option>
-                          </select>
-                        </div>
-
-                        <div>
-                          <label className="block text-[9px] text-white/50 uppercase tracking-widest font-mono mb-2">Active Profile</label>
-                          <select value={formData.active} onChange={e => setFormData({...formData, active: +e.target.value})} className="glass-select bg-black/60 rounded-xl border-white/5">
-                            <option value={1}>Active</option>
-                            <option value={0}>Sedentary</option>
-                          </select>
-                        </div>
-                      </div>
-
-                    </div>
-                  </div>
-
-                  {/* Predict CTA */}
-                  <div className="mt-8 flex justify-center border-t border-white/5 pt-6">
-                    <AnimatePresence mode="wait">
-                      {isAnalyzing ? (
-                        <motion.div 
-                          key="analyzing"
-                          initial={{ opacity: 0, scale: 0.95 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0 }}
-                          className="flex flex-col items-center gap-3 bg-black/60 border border-teal-400/20 rounded-2xl p-4 min-w-[280px]"
-                        >
-                          <div className="w-5 h-5 border-2 border-teal-400 border-t-transparent rounded-full animate-spin" />
-                          <span className="text-teal-400 font-mono text-[10px] tracking-wider text-center">{loadingMessages[analysisStep]}</span>
-                        </motion.div>
-                      ) : (
-                        <motion.button
-                          key="button"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          onClick={handlePredict}
-                          className="group flex items-center gap-3 bg-gradient-to-r from-[#FF2D55] to-[#8B0000] hover:from-[#FF2D55] hover:to-[#FF2D55]/90 text-white font-bold rounded-full px-8 py-3.5 transition-all shadow-[0_10px_30px_rgba(255,45,85,0.25)] hover:-translate-y-0.5"
-                        >
-                          <Zap size={14} className="text-white animate-pulse" />
-                          <span className="tracking-widest uppercase text-[10px]">Execute Diagnostic Scan</span>
-                          <ChevronRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
-                        </motion.button>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                </div>
-
-                {/* Metric Importance Column */}
-                <div className="lg:col-span-4 glass-card bg-[#0A0A0C]/75 border-white/5 rounded-3xl p-8 flex flex-col justify-between relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-80 h-80 bg-teal-400/5 rounded-full blur-[80px] pointer-events-none -z-10" />
-
-                  <div>
-                    <div className="flex items-center gap-3 border-b border-white/5 pb-4 mb-6">
-                      <span className="text-[#FF2D55] font-bold font-mono text-sm">[05]</span>
-                      <h3 className="text-white font-bold uppercase tracking-widest text-xs">Model Telemetry</h3>
-                    </div>
-
-                    <div className="space-y-4">
-                      <div>
-                        <span className="text-[9px] text-white/40 uppercase tracking-widest font-mono block mb-1">Classifier Weights</span>
-                        <div className="space-y-2 pt-1">
-                          <div className="flex justify-between text-[10px] font-mono">
-                            <span className="text-white/60">Arterial Pressure</span>
-                            <span className="text-teal-400">42.4%</span>
-                          </div>
-                          <div className="h-[1.5px] bg-white/5 w-full rounded overflow-hidden">
-                            <div className="bg-teal-400 h-full w-[42.4%]" />
-                          </div>
-
-                          <div className="flex justify-between text-[10px] font-mono pt-1">
-                            <span className="text-white/60">Age Index</span>
-                            <span className="text-teal-400">23.8%</span>
-                          </div>
-                          <div className="h-[1.5px] bg-white/5 w-full rounded overflow-hidden">
-                            <div className="bg-teal-400 h-full w-[23.8%]" />
-                          </div>
-
-                          <div className="flex justify-between text-[10px] font-mono pt-1">
-                            <span className="text-white/60">Lipids Index</span>
-                            <span className="text-[#FF2D55]">18.1%</span>
-                          </div>
-                          <div className="h-[1.5px] bg-white/5 w-full rounded overflow-hidden">
-                            <div className="bg-[#FF2D55] h-full w-[18.1%]" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="pt-6 border-t border-white/5 mt-6 flex items-center gap-3 text-[9px] font-mono text-white/40">
-                    <BarChart2 size={12} className="text-[#FF2D55]" />
-                    <span>BENCHMARK // ROC-AUC: 98.42%</span>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-          </motion.div>
-
         </div>
       </div>
 
-      {/* 2. CLINICAL RESULTS DISPLAY */}
-      <AnimatePresence>
-        {analysisComplete && result && (
-          <section id="clinical-results" className="relative z-20 bg-[#050505] py-20 border-t border-white/5">
-            <div className="max-w-[1400px] mx-auto px-6 md:px-12">
-              <div className="mb-10 text-center md:text-left">
-                <span className="text-xs text-teal-400 font-mono tracking-[0.25em] uppercase block mb-2">Biocore Diagnostics // Neural Predictor</span>
-                <h2 className="text-3xl font-bold text-white tracking-tight">Systemic Diagnostic Report</h2>
+      {/* 2. DENSE INTEGRATED CLINICAL ASSESSMENT & EMBEDDED DASHBOARD */}
+      {/* Placed as a static section directly below to ensure natural, seamless scrolling and interaction */}
+      <section id="assessment" className="relative z-20 bg-[#050505] py-24 border-t border-white/5 overflow-hidden">
+        
+        {/* Cinematic Backdrop overlays & active grid */}
+        <div className="absolute inset-0 opacity-[0.02] mix-blend-overlay pointer-events-none" 
+             style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '35px 35px' }} />
+        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-gradient-to-br from-[#8B0000]/10 to-[#FF2D55]/5 rounded-full blur-[140px] pointer-events-none" />
+        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-gradient-to-tr from-teal-500/5 to-blue-500/5 rounded-full blur-[120px] pointer-events-none" />
+
+        {/* Ambient active ECG line behind dashboard */}
+        <div className="absolute top-1/3 left-0 right-0 h-40 opacity-[0.05] pointer-events-none z-0">
+          <svg width="100%" height="100%" viewBox="0 0 1000 100" preserveAspectRatio="none">
+            <path d="M0,50 L300,50 L320,10 L340,90 L360,50 L700,50 L720,20 L740,80 L760,50 L1000,50" fill="none" stroke="#FF2D55" strokeWidth="1.5" />
+          </svg>
+        </div>
+
+        {/* FLOATING GLASSMORPHIC BIOMARKER OVERLAY BADGES */}
+        <div className="absolute top-12 left-10 md:left-20 bg-black/60 backdrop-blur-md border border-white/10 rounded-xl px-4 py-2 flex items-center gap-3 z-10 shadow-lg pointer-events-none animate-bounce" style={{ animationDuration: '4s' }}>
+          <span className="w-1.5 h-1.5 rounded-full bg-[#FF2D55] animate-pulse" />
+          <span className="text-[10px] text-white/60 font-mono uppercase tracking-widest">[SYS] 120 mmHg</span>
+        </div>
+        <div className="absolute top-28 right-10 md:right-20 bg-black/60 backdrop-blur-md border border-white/10 rounded-xl px-4 py-2 flex items-center gap-3 z-10 shadow-lg pointer-events-none animate-bounce" style={{ animationDuration: '5s' }}>
+          <span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse" />
+          <span className="text-[10px] text-white/60 font-mono uppercase tracking-widest">[LIP] 2.1 mmol/L</span>
+        </div>
+        <div className="absolute bottom-16 left-12 bg-black/60 backdrop-blur-md border border-white/10 rounded-xl px-4 py-2 flex items-center gap-3 z-10 shadow-lg pointer-events-none animate-bounce" style={{ animationDuration: '6s' }}>
+          <span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse" />
+          <span className="text-[10px] text-white/60 font-mono uppercase tracking-widest">[HR] 72 BPM</span>
+        </div>
+
+        <div className="max-w-[1400px] mx-auto px-6 md:px-12 relative z-10">
+          
+          {/* Header */}
+          <div className="text-center max-w-3xl mx-auto mb-20">
+            <div className="inline-flex items-center gap-3 bg-teal-950/20 border border-teal-500/20 rounded-full px-4 py-2 mb-6">
+              <span className="w-1.5 h-1.5 bg-teal-400 rounded-full animate-ping" />
+              <span className="text-[10px] text-teal-400 font-mono tracking-widest uppercase">System Interface // Neural Predictive Mode</span>
+            </div>
+            <h2 className="text-5xl md:text-6xl font-bold text-white tracking-tight mb-6">
+              Clinical Assessment Center
+            </h2>
+            <p className="text-white/60 text-lg font-light leading-relaxed max-w-2xl mx-auto">
+              Map patient vital signs and blood diagnostics to execute high-fidelity risk prediction with live machine learning intelligence models.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+            
+            {/* Input Config Card */}
+            <div className="lg:col-span-8 glass-card bg-[#0A0A0C]/50 border-white/5 rounded-3xl p-8 md:p-12 shadow-2xl relative overflow-hidden flex flex-col justify-between z-10">
+              <div className="absolute top-0 right-0 w-96 h-96 bg-teal-400/5 rounded-full blur-[90px] pointer-events-none -z-10" />
+
+              <div>
+                <div className="flex items-center justify-between border-b border-white/5 pb-5 mb-8">
+                  <div className="flex items-center gap-3">
+                    <span className="text-[#FF2D55] font-bold font-mono text-sm">[01]</span>
+                    <h3 className="text-white font-bold uppercase tracking-widest text-xs">Biometric Matrix Configuration</h3>
+                  </div>
+                  <span className="text-xs text-white/30 font-mono hidden md:inline">SYSTEM: ACTIVE</span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6">
+                  
+                  {/* Demographics */}
+                  <div className="space-y-4">
+                    <h4 className="text-[10px] text-teal-400 font-mono tracking-widest uppercase border-b border-white/5 pb-2">Demographics & Profile</h4>
+                    
+                    <div>
+                      <div className="flex justify-between mb-2">
+                        <label className="text-[10px] text-white/50 uppercase tracking-widest font-mono">Chronological Age</label>
+                        <span className="text-[10px] text-teal-400 font-mono font-bold">{formData.age} years</span>
+                      </div>
+                      <input type="range" min="18" max="100" value={formData.age} onChange={e => setFormData({...formData, age: +e.target.value})} className="w-full accent-[#FF2D55] h-1.5 rounded-lg appearance-none bg-white/5 cursor-pointer" />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-[10px] text-white/50 uppercase tracking-widest font-mono mb-2">Biological Sex</label>
+                        <select value={formData.gender} onChange={e => setFormData({...formData, gender: +e.target.value})} className="glass-select bg-black/60 py-2.5 rounded-xl border-white/5 text-xs">
+                          <option value={1}>Female</option>
+                          <option value={2}>Male</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-[10px] text-white/50 uppercase tracking-widest font-mono mb-2">Weight (kg)</label>
+                        <input type="number" value={formData.weight} onChange={e => setFormData({...formData, weight: +e.target.value})} className="glass-input bg-black/60 py-2.5 rounded-xl border-white/5 text-xs text-white" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Hemodynamics */}
+                  <div className="space-y-4">
+                    <h4 className="text-[10px] text-teal-400 font-mono tracking-widest uppercase border-b border-white/5 pb-2">Hemodynamics (Arterial Stress)</h4>
+                    
+                    <div>
+                      <div className="flex justify-between mb-2">
+                        <label className="text-[10px] text-white/50 uppercase tracking-widest font-mono">Systolic Pressure</label>
+                        <span className="text-[10px] text-[#FF2D55] font-mono font-bold">{formData.ap_hi} mmHg</span>
+                      </div>
+                      <input type="range" min="90" max="200" value={formData.ap_hi} onChange={e => setFormData({...formData, ap_hi: +e.target.value})} className="w-full accent-[#FF2D55] h-1.5 rounded-lg appearance-none bg-white/5 cursor-pointer" />
+                    </div>
+
+                    <div>
+                      <div className="flex justify-between mb-2">
+                        <label className="text-[10px] text-white/50 uppercase tracking-widest font-mono">Diastolic Pressure</label>
+                        <span className="text-[10px] text-[#FF2D55] font-mono font-bold">{formData.ap_lo} mmHg</span>
+                      </div>
+                      <input type="range" min="60" max="130" value={formData.ap_lo} onChange={e => setFormData({...formData, ap_lo: +e.target.value})} className="w-full accent-[#FF2D55] h-1.5 rounded-lg appearance-none bg-white/5 cursor-pointer" />
+                    </div>
+                  </div>
+
+                  {/* Lab & Lifestyle Attributes */}
+                  <div className="space-y-4 md:col-span-2 pt-4 border-t border-white/5 grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div>
+                      <label className="block text-[9px] text-white/50 uppercase tracking-widest font-mono mb-2">Serum Lipid</label>
+                      <select value={formData.cholesterol} onChange={e => setFormData({...formData, cholesterol: +e.target.value})} className="glass-select bg-black/60 rounded-xl border-white/5 text-xs">
+                        <option value={1}>Normal</option>
+                        <option value={2}>Borderline</option>
+                        <option value={3}>High Risk</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-[9px] text-white/50 uppercase tracking-widest font-mono mb-2">Fasting Glucose</label>
+                      <select value={formData.gluc} onChange={e => setFormData({...formData, gluc: +e.target.value})} className="glass-select bg-black/60 rounded-xl border-white/5 text-xs">
+                        <option value={1}>Normal</option>
+                        <option value={2}>Elevated</option>
+                        <option value={3}>Diabetic</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-[9px] text-white/50 uppercase tracking-widest font-mono mb-2">Active Smoker</label>
+                      <select value={formData.smoke} onChange={e => setFormData({...formData, smoke: +e.target.value})} className="glass-select bg-black/60 rounded-xl border-white/5 text-xs">
+                        <option value={0}>No</option>
+                        <option value={1}>Active</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-[9px] text-white/50 uppercase tracking-widest font-mono mb-2">Activity Profile</label>
+                      <select value={formData.active} onChange={e => setFormData({...formData, active: +e.target.value})} className="glass-select bg-black/60 rounded-xl border-white/5 text-xs">
+                        <option value={1}>Active</option>
+                        <option value={0}>Sedentary</option>
+                      </select>
+                    </div>
+                  </div>
+
+                </div>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                
-                {/* Diagnostic Classification */}
-                <div className={`glass-card bg-[#0A0A0C]/50 border-white/5 p-10 flex flex-col justify-between ${isHighRisk ? 'border-[#FF2D55]/30' : 'border-teal-400/20'}`}>
-                  <div>
-                    <span className="text-[10px] text-white/40 uppercase tracking-widest font-mono block mb-6">Outcome Flag</span>
-                    {isHighRisk ? (
-                      <div className="space-y-4">
-                        <div className="inline-flex items-center gap-3 bg-red-950/20 border border-red-500/20 text-[#FF2D55] px-4 py-2 rounded-xl text-xs font-semibold uppercase tracking-widest">
-                          <FileWarning size={16} />
-                          <span>Elevated Strain Flagged</span>
-                        </div>
-                        <p className="text-white/60 text-sm leading-relaxed font-light">
-                          Patient metrics heavily correlate with elevated cardiodynamics strain. Direct clinical imaging, therapeutic lipid mitigation, and hemodynamic monitoring are advised.
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="space-y-4">
-                        <div className="inline-flex items-center gap-3 bg-teal-950/20 border border-teal-500/20 text-teal-400 px-4 py-2 rounded-xl text-xs font-semibold uppercase tracking-widest">
-                          <CheckCircle2 size={16} />
-                          <span>Optimal Baseline</span>
-                        </div>
-                        <p className="text-white/60 text-sm leading-relaxed font-light">
-                          Calculated predictive parameters lie securely within healthy clinical reference standards. Maintain stable physical profiling tracks.
-                        </p>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="pt-6 border-t border-white/5 mt-8 text-xs font-mono text-white/40 flex justify-between">
-                    <span>Model Confidence Rating</span>
-                    <span className="text-white font-bold">{confidence}% Confidence</span>
-                  </div>
-                </div>
-
-                {/* Absolute Probability Gauge */}
-                <div className="glass-card bg-[#0A0A0C]/50 border-white/5 p-10 flex flex-col justify-center items-center relative overflow-hidden">
-                  <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,214,255,0.02),transparent_70%)] pointer-events-none" />
-                  <span className="text-[10px] text-white/40 uppercase tracking-widest font-mono block mb-10 text-center w-full">Absolute Probability Analysis</span>
-                  
-                  <div className="relative h-44 flex items-end justify-center overflow-hidden w-full max-w-[280px]">
-                    <div className="absolute top-0 w-full h-[280px] rounded-full border-[10px] border-white/5 border-b-transparent border-l-transparent -rotate-45" />
-                    
+              {/* Predict CTA */}
+              <div className="mt-10 flex justify-center border-t border-white/5 pt-6">
+                <AnimatePresence mode="wait">
+                  {isAnalyzing ? (
                     <motion.div 
-                      initial={{ rotate: -45 }}
-                      animate={{ rotate: -45 + (result.risk_probability / 100) * 180 }}
-                      transition={{ duration: 2.2, ease: [0.16, 1, 0.3, 1] }}
-                      className={`absolute top-0 w-full h-[280px] rounded-full border-[10px] border-b-transparent border-l-transparent -rotate-45 ${isHighRisk ? 'border-[#FF2D55]' : 'border-teal-400'}`}
-                      style={{ clipPath: 'polygon(0 0, 100% 0, 100% 50%, 0 50%)', filter: `drop-shadow(0 0 20px ${isHighRisk ? 'rgba(255,45,85,0.4)' : 'rgba(0,214,255,0.4)'})` }}
-                    />
-                    
-                    <div className="absolute bottom-0 text-center pb-2 flex flex-col items-center">
-                      <span className="text-6xl font-black text-white tracking-tighter drop-shadow-md">{riskProb}%</span>
-                      <span className="text-[9px] font-mono text-white/30 uppercase tracking-widest mt-2">Cardiac Strain Coefficient</span>
-                    </div>
-                  </div>
+                      key="analyzing"
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="flex flex-col items-center gap-3 bg-black/40 border border-teal-400/20 rounded-2xl p-5 min-w-[300px]"
+                    >
+                      <div className="w-5 h-5 border-2 border-teal-400 border-t-transparent rounded-full animate-spin" />
+                      <span className="text-teal-400 font-mono text-[10px] tracking-wider text-center">{loadingMessages[analysisStep]}</span>
+                    </motion.div>
+                  ) : (
+                    <motion.button
+                      key="button"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      onClick={handlePredict}
+                      className="group flex items-center gap-3 bg-gradient-to-r from-[#FF2D55] to-[#8B0000] hover:from-[#FF2D55] hover:to-[#FF2D55]/90 text-white font-bold rounded-full px-10 py-4 transition-all shadow-[0_10px_30px_rgba(255,45,85,0.25)] hover:-translate-y-0.5"
+                    >
+                      <Zap size={14} className="text-white animate-pulse" />
+                      <span className="tracking-widest uppercase text-[10px]">Execute Diagnostic Scan</span>
+                      <ChevronRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+                    </motion.button>
+                  )}
+                </AnimatePresence>
+              </div>
+
+            </div>
+
+            {/* Model Architecture & Heart Anchor Visual Column */}
+            <div className="lg:col-span-4 glass-card bg-[#0A0A0C]/50 border-white/5 rounded-3xl p-8 flex flex-col justify-between relative overflow-hidden z-10">
+              
+              {/* Dynamic Floating Heart Graphic inside dashboard backdrop to provide total scroll continuity */}
+              <div className="absolute inset-0 z-0 opacity-[0.25] pointer-events-none scale-90 mix-blend-screen flex items-center justify-center">
+                <Image 
+                  src="/assets/media__1779492571042.jpg" 
+                  alt="Backdrop Cardiac Structure Anchor" 
+                  width={300}
+                  height={300}
+                  className="object-contain filter hue-rotate-[320deg] brightness-125"
+                />
+              </div>
+
+              <div className="relative z-10">
+                <div className="flex items-center gap-3 border-b border-white/5 pb-4 mb-6">
+                  <span className="text-[#FF2D55] font-bold font-mono text-sm">[02]</span>
+                  <h3 className="text-white font-bold uppercase tracking-widest text-xs">Model Telemetry</h3>
                 </div>
 
-                {/* Primary Physiological Observations */}
-                <div className="glass-card bg-[#0A0A0C]/50 border-white/5 p-10 flex flex-col justify-between">
+                <div className="space-y-5">
                   <div>
-                    <span className="text-[10px] text-white/40 uppercase tracking-widest font-mono block mb-8">Physiochemical Observations</span>
-                    
-                    <div className="space-y-6">
-                      {formData.ap_hi >= 130 ? (
-                        <div className="flex gap-4">
-                          <div className="w-1.5 h-1.5 rounded-full bg-[#FF2D55] mt-2 shrink-0 shadow-[0_0_8px_rgba(255,45,85,0.8)]" />
-                          <div>
-                            <h4 className="text-white text-sm font-semibold mb-1">Hypertensive Shearing Strain</h4>
-                            <p className="text-white/40 text-xs leading-relaxed">Systemic pressure compounds microvascular calcification and arterial wall stiffening.</p>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="flex gap-4">
-                          <div className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0 shadow-[0_0_8px_rgba(0,214,255,0.8)]" />
-                          <div>
-                            <h4 className="text-white text-sm font-semibold mb-1">Stable Arterial Pressure</h4>
-                            <p className="text-white/40 text-xs leading-relaxed">Hemodynamic flow forces within healthy reference boundaries.</p>
-                          </div>
-                        </div>
-                      )}
+                    <span className="text-[9px] text-white/40 uppercase tracking-widest font-mono block mb-1">Classifier Standard</span>
+                    <p className="text-white font-semibold text-xs leading-normal">Extreme Gradient Boosting Matrix</p>
+                  </div>
+                  
+                  <div>
+                    <span className="text-[9px] text-white/40 uppercase tracking-widest font-mono block mb-2">Feature Weighting (Gini)</span>
+                    <div className="space-y-2 pt-1">
+                      <div className="flex justify-between text-[10px] font-mono">
+                        <span className="text-white/60">Arterial Pressure</span>
+                        <span className="text-teal-400">42.4%</span>
+                      </div>
+                      <div className="h-[1.5px] bg-white/5 w-full rounded overflow-hidden">
+                        <div className="bg-teal-400 h-full w-[42.4%]" />
+                      </div>
 
-                      {formData.cholesterol > 1 ? (
-                        <div className="flex gap-4">
-                          <div className="w-1.5 h-1.5 rounded-full bg-[#FF2D55] mt-2 shrink-0 shadow-[0_0_8px_rgba(255,45,85,0.8)]" />
-                          <div>
-                            <h4 className="text-white text-sm font-semibold mb-1">Lipid Plaque Saturation</h4>
-                            <p className="text-white/40 text-xs leading-relaxed">High serum concentration facilitates lipid plaque deposition in essential arteries.</p>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="flex gap-4">
-                          <div className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0 shadow-[0_0_8px_rgba(0,214,255,0.8)]" />
-                          <div>
-                            <h4 className="text-white text-sm font-semibold mb-1">Normalized Lipid Profiles</h4>
-                            <p className="text-white/40 text-xs leading-relaxed">Serum lipid parameters match standard baseline healthy references.</p>
-                          </div>
-                        </div>
-                      )}
+                      <div className="flex justify-between text-[10px] font-mono pt-1">
+                        <span className="text-white/60">Age Coefficient</span>
+                        <span className="text-teal-400">23.8%</span>
+                      </div>
+                      <div className="h-[1.5px] bg-white/5 w-full rounded overflow-hidden">
+                        <div className="bg-teal-400 h-full w-[23.8%]" />
+                      </div>
+
+                      <div className="flex justify-between text-[10px] font-mono pt-1">
+                        <span className="text-white/60">Serum Cholesterol</span>
+                        <span className="text-[#FF2D55]">18.1%</span>
+                      </div>
+                      <div className="h-[1.5px] bg-white/5 w-full rounded overflow-hidden">
+                        <div className="bg-[#FF2D55] h-full w-[18.1%]" />
+                      </div>
                     </div>
                   </div>
                 </div>
+              </div>
 
+              <div className="relative z-10 pt-6 border-t border-white/5 mt-6 flex items-center gap-3 text-[9px] font-mono text-white/40">
+                <BarChart2 size={12} className="text-[#FF2D55]" />
+                <span>BENCHMARK // ROC-AUC: 98.42%</span>
               </div>
             </div>
-          </section>
-        )}
-      </AnimatePresence>
+
+          </div>
+
+          {/* CLINICAL RESULTS DISPLAY */}
+          <AnimatePresence>
+            {analysisComplete && result && (
+              <motion.div
+                id="clinical-results"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 30 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                className="mt-16 border-t border-white/5 pt-16"
+              >
+                <div className="mb-10">
+                  <span className="text-xs text-teal-400 font-mono tracking-[0.25em] uppercase block mb-2">Biocore Analytics // Prediction Outcome</span>
+                  <h2 className="text-3xl font-bold text-white tracking-tight">Systemic Diagnostic Report</h2>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  
+                  {/* Diagnostic Classification */}
+                  <div className={`glass-card bg-[#0A0A0C]/50 border-white/5 p-10 flex flex-col justify-between ${isHighRisk ? 'border-[#FF2D55]/30' : 'border-teal-400/20'}`}>
+                    <div>
+                      <span className="text-[10px] text-white/40 uppercase tracking-widest font-mono block mb-6">Outcome Flag</span>
+                      {isHighRisk ? (
+                        <div className="space-y-4">
+                          <div className="inline-flex items-center gap-3 bg-red-950/20 border border-red-500/20 text-[#FF2D55] px-4 py-2 rounded-xl text-xs font-semibold uppercase tracking-widest">
+                            <FileWarning size={16} />
+                            <span>Elevated Strain Flagged</span>
+                          </div>
+                          <p className="text-white/60 text-sm leading-relaxed font-light">
+                            Patient vital metrics heavily correlate with high cardiodynamics strain. Clinical lifestyle architecture and preventative lipid monitoring are highly recommended.
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="space-y-4">
+                          <div className="inline-flex items-center gap-3 bg-teal-950/20 border border-teal-500/20 text-teal-400 px-4 py-2 rounded-xl text-xs font-semibold uppercase tracking-widest">
+                            <CheckCircle2 size={16} />
+                            <span>Optimal Baseline</span>
+                          </div>
+                          <p className="text-white/60 text-sm leading-relaxed font-light">
+                            Calculated predictive parameters lie securely within typical clinical reference scales. Standard healthcare monitoring protocols are suggested.
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="pt-6 border-t border-white/5 mt-8 text-xs font-mono text-white/40 flex justify-between">
+                      <span>Model Confidence</span>
+                      <span className="text-white font-bold">{confidence}% Confidence</span>
+                    </div>
+                  </div>
+
+                  {/* Risk Probability Gauge */}
+                  <div className="glass-card bg-[#0A0A0C]/50 border-white/5 p-10 flex flex-col justify-center items-center relative overflow-hidden">
+                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,214,255,0.02),transparent_70%)] pointer-events-none" />
+                    <span className="text-[10px] text-white/40 uppercase tracking-widest font-mono block mb-10 text-center w-full">Absolute Probability Analysis</span>
+                    
+                    <div className="relative h-44 flex items-end justify-center overflow-hidden w-full max-w-[280px]">
+                      <div className="absolute top-0 w-full h-[280px] rounded-full border-[10px] border-white/5 border-b-transparent border-l-transparent -rotate-45" />
+                      
+                      <motion.div 
+                        initial={{ rotate: -45 }}
+                        animate={{ rotate: -45 + (result.risk_probability / 100) * 180 }}
+                        transition={{ duration: 2.2, ease: [0.16, 1, 0.3, 1] }}
+                        className={`absolute top-0 w-full h-[280px] rounded-full border-[10px] border-b-transparent border-l-transparent -rotate-45 ${isHighRisk ? 'border-[#FF2D55]' : 'border-teal-400'}`}
+                        style={{ clipPath: 'polygon(0 0, 100% 0, 100% 50%, 0 50%)', filter: `drop-shadow(0 0 20px ${isHighRisk ? 'rgba(255,45,85,0.4)' : 'rgba(0,214,255,0.4)'})` }}
+                      />
+                      
+                      <div className="absolute bottom-0 text-center pb-2 flex flex-col items-center">
+                        <span className="text-6xl font-black text-white tracking-tighter drop-shadow-md">{riskProb}%</span>
+                        <span className="text-[9px] font-mono text-white/30 uppercase tracking-widest mt-2">Cardiac Strain Coefficient</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Primary Physiological Observations */}
+                  <div className="glass-card bg-[#0A0A0C]/50 border-white/5 p-10 flex flex-col justify-between">
+                    <div>
+                      <span className="text-[10px] text-white/40 uppercase tracking-widest font-mono block mb-8">Physiological Vectors</span>
+                      
+                      <div className="space-y-6">
+                        {formData.ap_hi >= 130 ? (
+                          <div className="flex gap-4">
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#FF2D55] mt-2 shrink-0 shadow-[0_0_8px_rgba(255,45,85,0.8)]" />
+                            <div>
+                              <h4 className="text-white text-sm font-semibold mb-1">Hypertensive Shearing Strain</h4>
+                              <p className="text-white/40 text-xs leading-relaxed">Elevated arterial pressure degrades endothelial membranes and triggers micro-calcifications.</p>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="flex gap-4">
+                            <div className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0 shadow-[0_0_8px_rgba(0,214,255,0.8)]" />
+                            <div>
+                              <h4 className="text-white text-sm font-semibold mb-1">Normal Hemodynamic Pressure</h4>
+                              <p className="text-white/40 text-xs leading-relaxed">Vascular pressure indicators are situated in healthy operational zones.</p>
+                            </div>
+                          </div>
+                        )}
+
+                        {formData.cholesterol > 1 ? (
+                          <div className="flex gap-4">
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#FF2D55] mt-2 shrink-0 shadow-[0_0_8px_rgba(255,45,85,0.8)]" />
+                            <div>
+                              <h4 className="text-white text-sm font-semibold mb-1">Elevated Lipid Plaque Index</h4>
+                              <p className="text-white/40 text-xs leading-relaxed">High lipid concentration facilitates lipid accumulation in central cardiac vessels.</p>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="flex gap-4">
+                            <div className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-2 shrink-0 shadow-[0_0_8px_rgba(0,214,255,0.8)]" />
+                            <div>
+                              <h4 className="text-white text-sm font-semibold mb-1">Optimal Lipid Baseline</h4>
+                              <p className="text-white/40 text-xs leading-relaxed">Calculated lipid profile matches normal, non-obstructive standards.</p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+        </div>
+      </section>
 
       {/* 3. CHAPTER 1: THE PATHOLOGY OF ARTERIAL STRESS */}
       <section className="relative bg-[#08080A] py-32 border-t border-white/5 overflow-hidden">
