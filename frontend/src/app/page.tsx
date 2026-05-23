@@ -17,6 +17,7 @@ export default function Home() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
 
+  // Tighter scroll track (280vh) for high-performance and snappy dynamic transitions
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"]
@@ -29,18 +30,18 @@ export default function Home() {
     });
   }, [scrollYProgress]);
 
-  // Framer Motion transforms for scroll-linked copy animation (0% - 85% of page scroll)
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.12], [1, 0]);
-  const heroY = useTransform(scrollYProgress, [0, 0.12], [0, -50]);
+  // Perfectly overlapping ranges to eliminate any blank dead zones
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
+  const heroY = useTransform(scrollYProgress, [0, 0.2], [0, -30]);
 
-  const revealOpacity = useTransform(scrollYProgress, [0.15, 0.22, 0.32, 0.38], [0, 1, 1, 0]);
-  const revealX = useTransform(scrollYProgress, [0.15, 0.22, 0.32, 0.38], [-30, 0, 0, -30]);
+  const revealOpacity = useTransform(scrollYProgress, [0.18, 0.26, 0.44, 0.5], [0, 1, 1, 0]);
+  const revealX = useTransform(scrollYProgress, [0.18, 0.26, 0.44, 0.5], [-20, 0, 0, -20]);
 
-  const circOpacity = useTransform(scrollYProgress, [0.42, 0.48, 0.58, 0.63], [0, 1, 1, 0]);
-  const circX = useTransform(scrollYProgress, [0.42, 0.48, 0.58, 0.63], [30, 0, 0, 30]);
+  const circOpacity = useTransform(scrollYProgress, [0.46, 0.54, 0.72, 0.78], [0, 1, 1, 0]);
+  const circX = useTransform(scrollYProgress, [0.46, 0.54, 0.72, 0.78], [20, 0, 0, 20]);
 
-  const detailOpacity = useTransform(scrollYProgress, [0.67, 0.73, 0.82, 0.86], [0, 1, 1, 0]);
-  const detailY = useTransform(scrollYProgress, [0.67, 0.73, 0.82, 0.86], [30, 0, 0, -30]);
+  const detailOpacity = useTransform(scrollYProgress, [0.74, 0.82, 0.94, 1.0], [0, 1, 1, 0]);
+  const detailY = useTransform(scrollYProgress, [0.74, 0.82, 0.94, 1.0], [20, 0, 0, -20]);
 
   // Interactive Clinical Model States
   const [formData, setFormData] = useState({
@@ -101,8 +102,8 @@ export default function Home() {
     <main className="relative bg-[#050505] text-white selection:bg-[#FF2D55]/30 overflow-x-hidden font-sans">
       <AppleNavbar />
 
-      {/* 1. HERO & HEART SEQUENCE SECTION (First 480vh) */}
-      <div ref={containerRef} className="relative h-[480vh] w-full">
+      {/* 1. HERO & HEART SEQUENCE SECTION (Tighter 280vh track for responsive pacing) */}
+      <div ref={containerRef} className="relative h-[280vh] w-full">
         
         {/* Full-Screen Sticky Viewport */}
         <div className="sticky top-0 left-0 w-full h-screen overflow-hidden z-10 flex items-center justify-center bg-[#050505]">
@@ -118,7 +119,7 @@ export default function Home() {
 
           {/* SCROLL-LINKED STORYTELLING OVERLAYS */}
           
-          {/* Beat 1: HERO / INTRO (0% - 12%) */}
+          {/* Beat 1: HERO / INTRO */}
           <motion.div 
             style={{ opacity: heroOpacity, y: heroY }}
             className="absolute z-20 text-center max-w-2xl px-6 pointer-events-none"
@@ -137,7 +138,7 @@ export default function Home() {
             </p>
           </motion.div>
 
-          {/* Beat 2: ANATOMICAL REVEAL (15% - 38%) */}
+          {/* Beat 2: ANATOMICAL REVEAL */}
           <motion.div 
             style={{ opacity: revealOpacity, x: revealX }}
             className="absolute z-20 left-12 md:left-24 max-w-md px-6 text-left pointer-events-none"
@@ -155,7 +156,7 @@ export default function Home() {
             </div>
           </motion.div>
 
-          {/* Beat 3: CIRCULATION & STRUCTURE (40% - 63%) */}
+          {/* Beat 3: CIRCULATION & STRUCTURE */}
           <motion.div 
             style={{ opacity: circOpacity, x: circX }}
             className="absolute z-20 right-12 md:right-24 max-w-md px-6 text-right pointer-events-none"
@@ -173,7 +174,7 @@ export default function Home() {
             </div>
           </motion.div>
 
-          {/* Beat 4: MICRO DETAIL & BIOLOGICAL COMPLEXITY (65% - 85%) */}
+          {/* Beat 4: MICRO DETAIL & BIOLOGICAL COMPLEXITY */}
           <motion.div 
             style={{ opacity: detailOpacity, y: detailY }}
             className="absolute z-20 max-w-2xl px-6 text-center pointer-events-none"
@@ -539,7 +540,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 3. CHAPTER 1: THE PATHOLOGY OF ARTERIAL STRESS (Highly Dense scroll content) */}
+      {/* 3. CHAPTER 1: THE PATHOLOGY OF ARTERIAL STRESS */}
       <section className="relative bg-[#08080A] py-40 border-t border-white/5 overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-gradient-to-br from-[#8B0000]/5 to-transparent rounded-full blur-[160px] pointer-events-none" />
         
@@ -613,7 +614,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 4. CHAPTER 2: TOXIC & LIFESTYLE ATTRIBUTION (Intense Detail) */}
+      {/* 4. CHAPTER 2: TOXIC & LIFESTYLE ATTRIBUTION */}
       <section className="relative bg-[#050505] py-40 border-t border-white/5 overflow-hidden">
         <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-gradient-to-tr from-teal-500/5 to-transparent rounded-full blur-[140px] pointer-events-none" />
 
@@ -677,7 +678,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 5. CHAPTER 3: THE PATH TO RECOVERY (Hope, Human Element, and Dynamic Color Transition) */}
+      {/* 5. CHAPTER 3: THE PATH TO RECOVERY */}
       <section className="relative bg-[#060A0D] py-48 border-t border-white/5 overflow-hidden">
         
         {/* Rich Restorative Emerald/Teal Ambient Glow */}
@@ -734,7 +735,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 6. EMOTIONAL RESOLUTION FOOTER (Stabilized calm rhythms and landscape) */}
+      {/* 6. EMOTIONAL RESOLUTION FOOTER */}
       <footer className="relative z-20 bg-[#050505] border-t border-white/5 overflow-hidden">
         
         {/* Soft morning cityscape backdrop */}

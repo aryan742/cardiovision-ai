@@ -22,7 +22,6 @@ export default function HeartSequenceCanvas({ scrollProgress, onLoadingComplete 
 
     for (let i = 1; i <= totalFrames; i++) {
       const img = new Image();
-      // Path format matches the unzipped frames (padded to 3 digits)
       const frameStr = String(i).padStart(3, "0");
       img.src = `/assets/heart_sequence/ezgif-frame-${frameStr}.jpg`;
       
@@ -37,7 +36,6 @@ export default function HeartSequenceCanvas({ scrollProgress, onLoadingComplete 
       };
       
       img.onerror = () => {
-        // Safe fallback in case some frames fail
         count++;
         setLoadedCount(count);
         if (count === totalFrames) {
@@ -50,7 +48,33 @@ export default function HeartSequenceCanvas({ scrollProgress, onLoadingComplete 
     }
   }, [onLoadingComplete]);
 
-  // Render loop based on scroll progress
+  // Handle canvas sizing ONCE and on window resize only
+  useEffect(() => {
+    const handleResize = () => {
+      if (!canvasRef.current) return;
+      const canvas = canvasRef.current;
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      
+      const ctx = canvas.getContext("2d");
+      if (ctx) {
+        ctx.scale(dpr, dpr);
+      }
+    };
+
+    if (isLoaded) {
+      // Give a tiny timeout for rect layout to compute correctly
+      setTimeout(handleResize, 100);
+      window.addEventListener("resize", handleResize);
+    }
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, [isLoaded]);
+
+  // High performance render loop (renders ONLY when scrollProgress or images change, without resizing)
   useEffect(() => {
     if (!isLoaded || images.length === 0 || !canvasRef.current) return;
 
@@ -58,15 +82,9 @@ export default function HeartSequenceCanvas({ scrollProgress, onLoadingComplete 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // Set high-DPI scaling
-    const dpr = window.devicePixelRatio || 1;
     const rect = canvas.getBoundingClientRect();
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
-    ctx.scale(dpr, dpr);
-
-    // Calculate target frame index
-    // Interpolate scrollProgress (0 to 1) across total frames
+    
+    // Calculate target frame index using smooth scroll progression mapping
     const frameIndex = Math.min(
       totalFrames - 1,
       Math.max(0, Math.floor(scrollProgress * totalFrames))
@@ -87,31 +105,14 @@ export default function HeartSequenceCanvas({ scrollProgress, onLoadingComplete 
       const scaleY = rect.height / imgHeight;
       const scale = Math.min(scaleX, scaleY) * 0.95; // slightly scaled down for premium framing
 
-      const x = (rect.width - imgWidth * scale) / 2;
-      const y = (rect.height - imgHeight * scale) / 2;
+      const w = imgWidth * scale;
+      const h = imgHeight * scale;
+      const x = (rect.width - w) / 2;
+      const y = (rect.height - h) / 2;
 
-      ctx.drawImage(img, x, y, imgWidth * scale, imgHeight * scale);
+      ctx.drawImage(img, x, y, w, h);
     }
   }, [scrollProgress, images, isLoaded]);
-
-  // Window resize handler to maintain crisp canvas dimensions
-  useEffect(() => {
-    const handleResize = () => {
-      if (!canvasRef.current || images.length === 0) return;
-      const canvas = canvasRef.current;
-      const ctx = canvas.getContext("2d");
-      if (!ctx) return;
-
-      const dpr = window.devicePixelRatio || 1;
-      const rect = canvas.getBoundingClientRect();
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
-      ctx.scale(dpr, dpr);
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [images]);
 
   const progressPercentage = Math.round((loadedCount / totalFrames) * 100);
 
@@ -129,7 +130,7 @@ export default function HeartSequenceCanvas({ scrollProgress, onLoadingComplete 
             <div className="max-w-md w-full px-6 space-y-6">
               <div className="space-y-2">
                 <div className="flex justify-between items-end">
-                  <span className="text-[10px] text-teal-400 font-mono tracking-[0.2em] uppercase">Biocore Systems</span>
+                  <span className="text-[10px] text-teal-400 font-mono tracking-[0.25em] uppercase">Biocore Systems</span>
                   <span className="text-sm text-white font-mono">{progressPercentage}%</span>
                 </div>
                 <h3 className="text-white text-lg font-light tracking-wider">PRELOADING TELEMETRY DATA</h3>
