@@ -17,6 +17,7 @@ export default function HeartSequenceCanvas({ scrollProgress, onLoadingComplete 
 
   // Preload all frames
   useEffect(() => {
+    let active = true;
     const loadedImages: HTMLImageElement[] = [];
     let count = 0;
 
@@ -26,6 +27,7 @@ export default function HeartSequenceCanvas({ scrollProgress, onLoadingComplete 
       img.src = `/assets/heart_sequence/ezgif-frame-${frameStr}.jpg`;
       
       img.onload = () => {
+        if (!active) return;
         count++;
         setLoadedCount(count);
         if (count === totalFrames) {
@@ -36,9 +38,11 @@ export default function HeartSequenceCanvas({ scrollProgress, onLoadingComplete 
       };
       
       img.onerror = () => {
+        if (!active) return;
         count++;
         setLoadedCount(count);
         if (count === totalFrames) {
+          setImages(loadedImages);
           setIsLoaded(true);
           onLoadingComplete();
         }
@@ -46,6 +50,10 @@ export default function HeartSequenceCanvas({ scrollProgress, onLoadingComplete 
 
       loadedImages.push(img);
     }
+
+    return () => {
+      active = false;
+    };
   }, [onLoadingComplete]);
 
   // Handle canvas sizing ONCE and on window resize only
@@ -83,6 +91,7 @@ export default function HeartSequenceCanvas({ scrollProgress, onLoadingComplete 
     if (!ctx) return;
 
     const rect = canvas.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) return; // Prevent layout calculation issues
     
     // Calculate target frame index using smooth scroll progression mapping
     const frameIndex = Math.min(
