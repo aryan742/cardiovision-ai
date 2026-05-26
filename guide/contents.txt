@@ -1,0 +1,657 @@
+# HERO SECTION
+
+AI-Powered Healthcare Intelligence
+
+Predict. Understand. Prevent.
+
+An immersive AI-driven healthcare intelligence platform designed to transform complex medical indicators into understandable, actionable insights across cardiovascular disease, diabetes, and breast cancer risk analysis.
+
+Advanced predictive systems combining biomarker interpretation, lifestyle analysis, and AI-assisted medical intelligence.
+
+[ Start Health Assessment ]
+
+[ Explore Intelligence Modules ]
+
+---
+
+# HERO MICRO LABELS
+
+Predictive Analytics
+AI Biomarker Intelligence
+Preventive Healthcare Systems
+Immersive Medical Insights
+Health Risk Interpretation
+Lifestyle Intelligence Mapping
+
+---
+
+# FLOATING MICRO TEXT AROUND HERO
+
+Cardiovascular Stability
+Metabolic Health Monitoring
+Predictive Disease Intelligence
+Blood Pressure Analysis
+Glucose Pattern Interpretation
+Lifestyle Risk Assessment
+Early Detection Systems
+Physiological Trend Analysis
+Preventive Health Awareness
+
+---
+
+# HEALTHCARE MODULES SECTION
+
+Healthcare Intelligence Modules
+
+Explore AI-assisted health analysis systems designed to identify patterns, assess risks, and support long-term preventive awareness across major health conditions.
+
+---
+
+## CARDIOVASCULAR INTELLIGENCE
+
+AI-Driven Cardiovascular Intelligence
+
+Advanced cardiovascular assessment using predictive biomarker analysis, blood pressure interpretation, cholesterol indicators, and lifestyle-based risk modeling.
+
+Key Analysis Areas:
+
+* Blood Pressure
+* Cholesterol Patterns
+* Circulation Health
+* Heart Stress Indicators
+* Lifestyle-Based Risk Factors
+* Long-Term Cardiovascular Stability
+
+[ Explore Cardiovascular Intelligence ]
+
+---
+
+## DIABETES INTELLIGENCE
+
+Metabolic & Diabetes Intelligence
+
+AI-powered metabolic health analysis using glucose-related indicators, lifestyle patterns, body composition signals, and long-term metabolic trend interpretation.
+
+Key Analysis Areas:
+
+* Glucose Indicators
+* Metabolic Balance
+* Weight & Activity Patterns
+* Insulin-Related Trends
+* Lifestyle Risk Evaluation
+* Preventive Awareness
+
+[ Explore Metabolic Intelligence ]
+
+---
+
+## BREAST CANCER INTELLIGENCE
+
+Breast Cancer Detection Intelligence
+
+Predictive diagnostic analysis designed to support early awareness through intelligent pattern recognition, health indicators, and clinical interpretation systems.
+
+Key Analysis Areas:
+
+* Early Detection Awareness
+* Pattern Recognition
+* Risk Interpretation
+* Screening Intelligence
+* Clinical Indicator Analysis
+* Preventive Monitoring
+
+[ Explore Diagnostic Intelligence ]
+
+---
+
+# WHY THIS PLATFORM EXISTS
+
+Modern healthcare data is often difficult to interpret without medical expertise.
+
+This platform transforms health indicators into understandable, visual, and actionable insights designed to improve awareness, support prevention, and encourage healthier long-term decisions.
+
+The goal is not fear.
+
+The goal is understanding.
+
+---
+
+# GUIDED HEALTH ASSESSMENT SECTION
+
+Personalized Health Assessment
+
+Provide basic physiological and lifestyle information to generate AI-assisted predictive health insights tailored to your selected health condition.
+
+The assessment combines:
+
+* biomarker analysis
+* physiological indicators
+* lifestyle patterns
+* statistical risk interpretation
+* predictive healthcare modeling
+
+---
+
+# FORM SECTION TITLES
+
+Personal Profile
+
+Vital Indicators
+
+Lifestyle & Habits
+
+Clinical Health Metrics
+
+Preventive Health Factors
+
+---
+
+# INPUT FIELD LABELS
+
+Age
+Gender
+Weight
+Height
+BMI
+Blood Pressure
+Heart Rate
+Glucose Level
+Cholesterol
+Smoking Habits
+Alcohol Consumption
+Daily Activity Level
+Sleep Duration
+Stress Level
+Family History
+Exercise Frequency
+Diet Pattern
+Medication History
+
+---
+
+# MICRO HELP TEXT
+
+Small long-term lifestyle patterns may significantly influence future health outcomes.
+
+Consistent preventive awareness supports healthier physiological stability over time.
+
+AI-assisted interpretation helps identify patterns often difficult to observe manually.
+
+---
+
+# AI ANALYSIS TRANSITION SECTION
+
+Analyzing Health Intelligence
+
+Evaluating physiological indicators...
+
+Processing cardiovascular biomarkers...
+
+Analyzing metabolic stability...
+
+Generating predictive health profile...
+
+Interpreting long-term risk patterns...
+
+Mapping lifestyle-based influence systems...
+
+Building AI-assisted diagnostic insights...
+
+Evaluating systemic health indicators...
+
+Processing clinical interpretation layers...
+
+---
+
+# AI ANALYSIS SIDE TEXT
+
+Predictive Pattern Recognition
+
+Biomarker Intelligence Processing
+
+Lifestyle Correlation Analysis
+
+Health Trend Interpretation
+
+Physiological Stability Mapping
+
+Preventive Risk Evaluation
+
+---
+
+# DASHBOARD INTRO SECTION
+
+AI Health Intelligence Dashboard
+
+A comprehensive overview of predictive health indicators, biomarker interpretation, physiological trends, and condition-specific risk insights.
+
+Designed to transform medical complexity into understandable health intelligence.
+
+---
+
+# DASHBOARD MAIN METRICS
+
+Risk Probability
+
+Biomarker Stability
+
+Lifestyle Influence
+
+Physiological Stress Index
+
+Metabolic Balance
+
+Cardiovascular Stability
+
+Health Resilience Score
+
+Preventive Awareness Index
+
+---
+
+# HEALTH PROFILE SUMMARY
+
+Health Profile Summary
+
+Your current health profile suggests moderate physiological stability with several emerging risk indicators influenced by lifestyle patterns, biomarker fluctuations, and long-term metabolic conditions.
+
+Preventive lifestyle improvements and regular monitoring may significantly improve long-term outcomes.
+
+---
+
+# WHAT THIS MEANS SECTION
+
+Understanding Your Results
+
+Health conditions rarely develop from a single cause.
+
+Most long-term medical risks emerge gradually through interactions between:
+
+* lifestyle
+* physiology
+* genetics
+* environment
+* stress
+* nutrition
+* long-term biological strain
+
+This analysis highlights patterns commonly associated with elevated health risks based on the available medical dataset and predictive modeling systems.
+
+---
+
+# POSSIBLE CONTRIBUTING FACTORS
+
+Possible Contributing Factors
+
+Sedentary Lifestyle
+
+Irregular Sleep Patterns
+
+Elevated Blood Pressure
+
+Chronic Stress Exposure
+
+Poor Dietary Balance
+
+Excess Processed Sugar Intake
+
+High Cholesterol Levels
+
+Smoking Habits
+
+Limited Physical Activity
+
+Metabolic Imbalance
+
+Long-Term Physiological Strain
+
+Family History Indicators
+
+---
+
+# CARDIOVASCULAR EDUCATIONAL SECTION
+
+Understanding Cardiovascular Stress
+
+Cardiovascular disease often develops gradually over many years before noticeable symptoms appear.
+
+Long-term strain on blood vessels, circulation systems, and cardiac function may increase the likelihood of future cardiovascular complications.
+
+---
+
+## CHOLESTEROL SUBSECTION
+
+How Cholesterol Affects Arterial Health
+
+Excess cholesterol may gradually accumulate along arterial walls, reducing healthy blood flow and increasing cardiovascular strain over time.
+
+As arteries narrow:
+
+* circulation efficiency decreases
+* blood pressure rises
+* cardiac workload increases
+
+Preventive lifestyle management may significantly reduce long-term vascular stress.
+
+---
+
+## BLOOD PRESSURE SUBSECTION
+
+The Long-Term Impact of Elevated Blood Pressure
+
+Persistent high blood pressure places continuous stress on arterial walls and cardiovascular systems.
+
+Over time this may contribute to:
+
+* arterial damage
+* circulation inefficiency
+* increased heart strain
+* elevated cardiovascular risk
+
+---
+
+## SMOKING SUBSECTION
+
+Smoking & Cardiovascular Damage
+
+Smoking may significantly impact vascular health by:
+
+* reducing oxygen circulation
+* increasing arterial stress
+* damaging blood vessel function
+* accelerating long-term cardiovascular decline
+
+---
+
+# DIABETES EDUCATIONAL SECTION
+
+Understanding Metabolic Imbalance
+
+Diabetes develops when the body's ability to regulate blood glucose becomes impaired.
+
+Long-term metabolic imbalance may influence:
+
+* circulation
+* nerve function
+* cardiovascular stability
+* systemic physiological health
+
+---
+
+## GLUCOSE SUBSECTION
+
+Glucose & Metabolic Regulation
+
+Stable glucose regulation plays a critical role in maintaining healthy metabolic balance.
+
+Irregular glucose patterns may gradually increase long-term metabolic and vascular stress.
+
+---
+
+## LIFESTYLE SUBSECTION
+
+Lifestyle Influence on Metabolic Health
+
+Daily movement, nutrition, stress management, and sleep consistency may strongly influence long-term metabolic stability.
+
+---
+
+# BREAST CANCER EDUCATIONAL SECTION
+
+Understanding the Importance of Early Detection
+
+Early awareness and regular screening may significantly improve diagnostic outcomes and long-term treatment possibilities.
+
+Predictive analysis systems help identify patterns associated with elevated diagnostic attention requirements.
+
+---
+
+## SCREENING SUBSECTION
+
+Why Screening Matters
+
+Many serious health conditions develop gradually before obvious symptoms become noticeable.
+
+Early screening may support:
+
+* earlier awareness
+* faster intervention
+* improved monitoring
+* better long-term healthcare outcomes
+
+---
+
+# CONDITION STATE SECTION
+
+Current Health State Interpretation
+
+---
+
+## OPTIMAL HEALTH STATE
+
+Optimal Physiological Stability
+
+Your current indicators suggest relatively stable cardiovascular and metabolic conditions.
+
+Maintaining healthy lifestyle patterns may support long-term physiological resilience and systemic balance.
+
+---
+
+## MILD RISK STATE
+
+Emerging Health Indicators
+
+Several indicators suggest mild physiological stress patterns that may benefit from preventive lifestyle improvements and regular monitoring.
+
+---
+
+## BORDERLINE RISK STATE
+
+Borderline Risk Patterns Detected
+
+Some biomarkers and lifestyle indicators suggest early cardiovascular or metabolic strain.
+
+Preventive lifestyle adjustments and proactive health awareness may significantly reduce future risk progression.
+
+---
+
+## ELEVATED RISK STATE
+
+Elevated Risk Indicators
+
+Several physiological markers suggest increased long-term health risk patterns associated with cardiovascular or metabolic instability.
+
+Professional medical evaluation and sustained lifestyle intervention are strongly recommended.
+
+---
+
+## HIGH RISK STATE
+
+High Risk Health Patterns Detected
+
+Multiple indicators suggest elevated physiological strain requiring professional healthcare attention and long-term preventive management.
+
+---
+
+# WHAT TO DO NOW SECTION
+
+Recommended Next Steps
+
+Increase Daily Physical Activity
+
+Improve Nutritional Consistency
+
+Reduce Excess Processed Sugar Intake
+
+Monitor Blood Pressure Regularly
+
+Maintain Healthier Sleep Cycles
+
+Reduce Chronic Stress Exposure
+
+Schedule Preventive Health Screening
+
+Track Long-Term Biomarker Changes
+
+Improve Hydration & Recovery
+
+Reduce Smoking & Alcohol Exposure
+
+---
+
+# WHAT TO AVOID SECTION
+
+Avoid
+
+Long-Term Sedentary Lifestyle
+
+Smoking Habits
+
+Chronic Sleep Deprivation
+
+Excess Processed Foods
+
+Uncontrolled Stress Patterns
+
+Excessive Sugar Consumption
+
+Ignoring Early Warning Indicators
+
+Irregular Health Monitoring
+
+Extreme Lifestyle Imbalance
+
+---
+
+# LONG-TERM EFFECTS SECTION
+
+Potential Long-Term Impact
+
+Without lifestyle intervention and preventive management, prolonged cardiovascular or metabolic strain may increase the likelihood of future complications affecting vascular, neurological, and systemic health stability.
+
+---
+
+# PROFESSIONAL MEDICAL ATTENTION SECTION
+
+When Professional Medical Evaluation Is Recommended
+
+Persistent symptoms, elevated biomarkers, unexplained fatigue, chest discomfort, irregular glucose patterns, or rapidly worsening health indicators should always be evaluated by a licensed healthcare professional.
+
+---
+
+# PREVENTION SECTION
+
+Prevention Begins with Everyday Decisions
+
+Small consistent lifestyle improvements may significantly improve long-term physiological resilience and reduce future health risks.
+
+---
+
+## PREVENTION CARDS
+
+Balanced Nutrition
+
+Consistent healthy eating patterns support cardiovascular, metabolic, and systemic health stability.
+
+---
+
+Daily Physical Activity
+
+Regular movement improves circulation efficiency, metabolic balance, and long-term cardiovascular function.
+
+---
+
+Sleep & Recovery
+
+Rest and recovery play a critical role in maintaining hormonal balance, neurological stability, and systemic recovery.
+
+---
+
+Stress Management
+
+Chronic stress may contribute to elevated cardiovascular and metabolic strain over time.
+
+---
+
+Preventive Monitoring
+
+Regular health awareness and biomarker tracking support earlier intervention and improved long-term outcomes.
+
+---
+
+# HEALTH RECOVERY TIMELINE
+
+Recovery & Lifestyle Progression
+
+Week 1
+Small physiological stabilization begins through healthier daily habits.
+
+Month 1
+Improved circulation, metabolic consistency, and energy balance may become noticeable.
+
+Month 3
+Long-term cardiovascular and metabolic stress patterns may begin improving.
+
+Month 6
+Sustained healthy routines may significantly improve long-term physiological resilience.
+
+---
+
+# EMOTIONAL RECOVERY SECTION
+
+Health Is a Long-Term Journey
+
+Understanding health risk is not about fear.
+
+It is about:
+
+* awareness
+* prevention
+* consistency
+* understanding
+* healthier long-term systems
+
+Small improvements practiced consistently over time may create meaningful physiological change.
+
+---
+
+# HUMAN-CENTERED SECTION
+
+Healthcare Designed Around Human Understanding
+
+Technology alone does not improve health.
+
+Understanding, awareness, prevention, and consistent healthier choices remain at the center of long-term wellbeing.
+
+---
+
+# FINAL CTA SECTION
+
+Begin Your Personalized Health Intelligence Assessment
+
+Explore AI-assisted predictive healthcare insights designed to support awareness, prevention, and long-term understanding.
+
+[ Start Assessment ]
+
+---
+
+# FOOTER SECTION
+
+AI-driven healthcare intelligence designed for awareness, prevention, and human-centered understanding.
+
+Predictive Healthcare Intelligence
+Cardiovascular Analysis
+Metabolic Risk Interpretation
+Diagnostic Awareness Systems
+Preventive Health Education
+
+About
+Technology
+Medical Intelligence
+Privacy
+Research
+Healthcare Disclaimer
+
+This platform is designed for educational and predictive insight purposes only and should not replace professional medical diagnosis, treatment, or emergency healthcare services.
+
+© 2026 MedVision AI — Intelligent Healthcare Experiences for Preventive Awareness.

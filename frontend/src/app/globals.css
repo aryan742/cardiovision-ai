@@ -1,0 +1,127 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 10% 2%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 4%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 2%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 346.8 77.2% 49.8%;
+    --destructive-foreground: 355.7 100% 97.3%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+    --radius: 0.75rem;
+  }
+}
+
+@layer base {
+  * {
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+  body {
+    background-color: #050505;
+    color: rgb(240, 240, 240);
+    overflow-x: hidden;
+  }
+}
+
+/* Custom premium styles */
+.glass-card {
+  background: rgba(10, 10, 12, 0.45);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+}
+
+.text-gradient {
+  background: linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0.5) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.glow-teal {
+  box-shadow: 0 0 50px -10px rgba(45, 212, 191, 0.15);
+}
+
+.glow-rose {
+  box-shadow: 0 0 50px -10px rgba(255, 45, 85, 0.15);
+}
+
+/* Sneaky button custom hover states */
+.button06 {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 2rem;
+  border-radius: 9999px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.button06_bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #0050FF 0%, #00D6FF 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 0;
+}
+
+.button06:hover .button06_bg {
+  opacity: 0.15;
+}
+
+.button06:hover {
+  border-color: rgba(0, 214, 255, 0.4);
+  box-shadow: 0 0 20px -5px rgba(0, 214, 255, 0.3);
+}
+
+.button06_inner {
+  position: relative;
+  z-index: 10;
+}
+
+.button06_text {
+  display: block;
+}
+
+.button06_icon {
+  margin-left: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  z-index: 10;
+}
+
+.button06_icon-svg {
+  width: 8px;
+  height: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  transition: color 0.3s ease;
+}
+
+.button06:hover .button06_icon-svg {
+  color: #00D6FF;
+}
